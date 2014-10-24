@@ -33,7 +33,13 @@ Cette méthode est bien plus efficace qu'un parcours de la liste des triangles p
 
 \textit{Cette sous-partie traite exclusivement de l'article} On building fast kd-Trees for Ray Tracing, and on doing that in O(N log N)\textit{, de Ingo Wald et Vlastimil Havran.}
 
-L'article présente un algorithme permettant de construire des kd-Trees efficaces avec une complexité de $O(N.log(N))$.
+L'article présente un algorithme permettant de construire des kd-Trees efficaces avec une complexité de $O(N.log(N))$. Les auteurs partent du constat qu'on cherche en général à construires des kd-Trees efficaces pour la recherche dans un espace à $k$ dimensions, sans prendre en compte le temps de construction du kd-Tree. Il est vrai que ceci n'est pas un gros problème pour des petits espaces. Cependant, les espaces deviennent de plus en plus grands et de plus en plus denses, ce qui met eu premier plan la nécessité de disposer d'algorithmes rapides. Or, la plupart des algorithmes utilisés aujourd'hui ont une complexité de $O(Nlog²N)$ ou même de $O(N²)$. Il est dit que la limite inférieure théoriquement atteignable est $O(N.log(N))$.
+
+La proposition d'algorithme est tirée d'un algorithme en $O(N.log²(N))$ ré-adapté. Comme pour tous les algorithmes, de construction de kd-Trees, ce qui est déterminant est la recherche du plan séparateur en chaque noeud. Pour ce faire, il faut trouver un plan aligné sur un des axes de la base du repère qui minimise le côut estimé de traversée des deux voxels. L'approche utilisée pour clculer ce coût est l'heuristique SAH\footnote{Surface Area Heuristique}. Le coût calculé alrs calculé est~:
+
+%TODO formule du coût.
+
+Des considérations heuristiques permettent de définir un ensemble de plans candidats, à partir desquels sera choisi le plan minimisant le coût. Le principe de l'algorithme initial étudié est le suivant~: pour chaque dimension
 
 \subsection{Parallélisation de la construction sur GPU}
 
