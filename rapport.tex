@@ -21,11 +21,23 @@ Your abstract.
 
 \section{Introduction}
 
-Aujourd'hui, la modélisation 3D doit faire face à des scènes de plus en plus complexes. Cette croissance doit être suivie par des algorithmes de plus en plus efficaces pour gérer la position des objets dans l'espace. Cette classe de problèmes utilise généralement une structure d'arbre dénommée \textbf{kd-Tree}\footnote{kd-Tree : représentation d'un espace de k dimensions sous forme d'arbre binaire. La racine représente l'espace entier et chaque fils représente un sous-espace de l'espace père défini par coupure par un plan $P$ perpendiculaire à l'un des axes du repère orthogonal.}. Pour le calcul de la vue en 2D obtenue à partir d'un certain endroit de la scène par exemple, la technique du lancé de rayons utilise cette structure. Ainsi, lorsque l'on cherche les points d'intersection d'une demie-droite avec les objets de la scène, il suffit de parcourir l'arbre en ne considérant que les noeuds sous-espaces pour lesquels il y a effectivement intersection. Un exemple d'espace 2D partitionné et le kd-tree associés sont respectivements représentés en figures \ref{•} et \ref{•}. Sur l'arbre, les chemins parcourus pour chercher les points d'intersection avec les sous-espaces sont en rouge et les feuilles pour lesquelles il y a effectivement intersection sont marqués d'un I.
+Aujourd'hui, la modélisation 3D doit faire face à des scènes de plus en plus complexes. Cette croissance doit être suivie par des algorithmes de plus en plus efficaces pour gérer la position des objets dans l'espace. Cette classe de problèmes utilise généralement une structure d'arbre dénommée \textbf{kd-Tree}\footnote{kd-Tree : représentation d'un espace de k dimensions sous forme d'arbre binaire. La racine représente l'espace entier et chaque fils représente un sous-espace de l'espace père défini par coupure par un plan $P$ perpendiculaire à l'un des axes du repère orthogonal.}. Pour le calcul de la vue en 2D obtenue à partir d'un certain endroit de la scène par exemple, la technique du lancé de rayons utilise cette structure. Ainsi, lorsque l'on cherche les points d'intersection d'une demie-droite avec les objets de la scène, il suffit de parcourir l'arbre en ne considérant que les noeuds sous-espaces pour lesquels il y a effectivement intersection. Un exemple d'espace 2D partitionné et le kd-tree associés sont respectivements représentés en figures \ref{} et \ref{}. Sur l'arbre, les chemins parcourus pour chercher les points d'intersection avec les sous-espaces sont en rouge et les feuilles pour lesquelles il y a effectivement intersection sont marqués d'un I.
 
 %TODO insérer les figures
 
 Cette méthode est bien plus efficace qu'un parcours de la liste des triangles présents dans la scène. En effet, pour un nombre $N$ de triangles, la complexité d'une recherche "naïve" est d'ordre $O(N)$, alors que l'utilisation d'un kd-tree amène une complexité d'ordre $O(log(N))$.
+
+\section{Présentation des articles}
+
+\subsection{Construction de kd-Trees en O(N log N)}
+
+\textit{Cette sous-partie traite exclusivement de l'article} On building fast kd-Trees for Ray Tracing, and on doing that in O(N log N)\textit{, de Ingo Wald et Vlastimil Havran.}
+
+L'article présente un algorithme permettant de construire des kd-Trees efficaces avec une complexité de $O(N.log(N))$.
+
+\subsection{Parallélisation de la construction sur GPU}
+
+\textit{Cette sous-partie traite exclusivement de l'article} Real-Time KD-Tree Construction on Graphics Hardware\textit{, de Kun Zhou, Qiming Hou, Rui Wang et Baining Guo.}
 
 \section{Some \LaTeX{} Examples}
 \label{sec:examples}
