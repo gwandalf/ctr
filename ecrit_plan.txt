@@ -1,0 +1,13 @@
+Important : il faut être dans l'esprit d'améliorer ces recherches, surtout les résultats (pour les méthodes c'est plus dur... mais c'est bien d'y travailler)
+
+abstract : réponse au "pourquoi" de mon rapport + énumération des axes (sans explications). 
+introduction : contexte général (1$), contexte précis (1$), problème principal traité par chaque article ("Quoi") (2$), plan détaillé et expliqué (mettre en évidence la cohérence de la démarche).
+Article 1 : article général
+	(+) L'article a le mérite de citer un grand nombre de travaux. On est convaincu par son utilité (first GPU-based kd-tree construction algorithm ---> à vérifier). Les résultats sont convaincants également. L'approche est mise à l'épreuve dans 3 exemples d'applications différents.
+	(-) L'algorithme semble compliqué. Il aurait été intéressant d'en analyser la complexité (à faire).
+
+Article 2 : construction de kd-trees en O(nlogn).
+	résumé de l'article (quoi + comment)
+	Première impression est très positive : la démarche est très rigoureuse et du recul est pris par rapport aux (bons) résultats (expliquer). Le fait que l'algorithme ait prouvé sa valeur dans l'industrie est un argument solide en sa faveur. Dommage quand même que les résultats de performances des traversées des kd-trees ne soient pas présentés (c'est vrai que ce n'est pas le sujet de l'article mais c'est l'essentiel pour les kd-trees).
+	Pas de comparaison en terme place de mémoire prise par les structures de données. Il serait intéressant d'avoir cette information (faire l'expérience pour connaitre cela et donner les conclusions).
+	Part du principe que SAH est la meilleure approche. Existe-t-il d'autres approches reconnues plus rapides (mais certainement pas de meilleure complexité) ? 
