@@ -34,6 +34,12 @@ La clé de l'algorithme est d'optimiser la parallélisation en considérant deux
 \end{enumerate}
 Plus précisément, au début de la construction chaque processus est chargé de classer un certain nombre de triangles d'un côté ou de l'autre d'un plan de partitionnement. Le nombre de triangles est grand et le nombre de nœuds est petit, un plus grand nombre de processus s’exécuteront alors en parallèle. A l'inverse, à la fin de la construction le nombre de nœuds est grand et le nombre de triangles par nœud est petit, ce qui explique l'inversion du choix. Cette fois, c'est la construction de chaque sous-arbre qui s'effectuera en parallèle.
 
+L'optimisation de la parallélisation n'est pas la seule différence entre les deux étapes. En effet, l'autre clé de l'algorithme est de calculer rapidement la fonction de coût. L'heuristique utilisée est SAH, comme pour le premier article. La fonction de coût est donc la même~:
+\\\\
+$SAH(x) = C_{ts} + \frac{C_L(x)A_L(x)}{A} + \frac{C_L(x)A_L(x)}{A}$,
+\\\\
+où $C_{ts}$ est le coût de traversée du nœud courant,
+
 
 
 \section{Some \LaTeX{} Examples}
