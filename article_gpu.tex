@@ -36,11 +36,19 @@ Plus précisément, au début de la construction chaque processus est chargé de
 
 L'optimisation de la parallélisation n'est pas la seule différence entre les deux étapes. En effet, l'autre clé de l'algorithme est de calculer rapidement la fonction de coût. L'heuristique utilisée est SAH, comme pour le premier article. La fonction de coût est donc la même~:
 \\\\
-$SAH(x) = C_{ts} + \frac{C_L(x)A_L(x)}{A} + \frac{C_L(x)A_L(x)}{A}$,
+$SAH(x) = C_{ts} + \frac{C_L(x)A_L(x)}{A} + \frac{C_R(x)A_R(x)}{A}$,
 \\\\
-où $C_{ts}$ est le coût de traversée du nœud courant,
+où $C_{ts}$ est le coût de traversée du nœud courant, $C_L(x)$ (resp. $C_R(x)$) est le coût de traversée du nœud gauche (resp. droit) pour le plan de séparation en position $x$, $A$ est l'aire de la surface courante, $A_L(x)$ (resp. $A_R(x)$) est l'aire de la surface du nœud gauche (resp. droit).
+\\\\
+Le calcul de cette fonction est impossible pour le problème de construction de l'arbre car pour calculer le coût au nœud courant, il faut connaître le coût des nœuds fils. La fonction doit donc être estimée. L'approche utilisée ici consiste à calculer $C_L(x)$ et $C_R(x)$ comme si les fils du nœud courant étaient des feuilles.
 
+Cette approximation marche bien pour les nœuds proches des feuilles, c'est à dire pour la deuxième étape de l'algorithme. En revanche, elle n'est pas satisfaisante près de la racine. C'est pourquoi pour la première étape certaines coupures se feront par le pan médian perpendiculaire à l'axe le plus long, ce qui constitue une technique peu coûteuse mais aussi peu efficace pour le parcours de l'arbre. Ceci est valable pour les aires homogènes en terme de densité. Pour les autres, c'est à dire celles dont on peut trouver une partition vide occupant au moins un quart de l'espace, c'est le plan correspondant qui est choisi. La figure \ref{fig:partition}, tirée de l'article, résume cette explication~:
 
+\begin{figure}[!h]
+\centering
+\includegraphics[width=0.75\textwidth]{res/partitioning.png}
+\caption{\label{fig:partition}Deux cas de partitionnement des grands nœuds~: (a) coupure d'espace vide, (b) plan médian.}
+\end{figure}
 
 \section{Some \LaTeX{} Examples}
 \label{sec:examples}
