@@ -28,7 +28,7 @@ La proposition d'algorithme est tirée d'un algorithme en $O(N.log²(N))$ ré-ad
 
 Des considérations heuristiques permettent de définir un ensemble de plans candidats, à partir desquels sera choisi le plan minimisant le coût. L'idée de base pour trouver les candidats est de ne sélectionner que les plans qui délimitent les AABB\footnote{Axis Aligned Bounding Box} des triangles, car ce sont les endroits où le nombre de triangles change d'un c\^oté et de l'autre du plan, ce qui provoque des sauts dans la fonction de co\^ut. Les minimums sont donc à chercher à ces positions.
 
-Puisque l'on veut connaître la complexité de nos algorithmes, commençons par identifier les grandes étapes d'un algorithme de construction d'un kd-tree. Nous retrouverons toujours les mêmes, seule l'implémentation des fonctions définies changera. En pseudo-code, la fonction de construction dont on veut connaître la complexité est~:
+Puisque l'on veut connaître la complexité de nos algorithmes, commençons par identifier les grandes étapes d'un algorithme de construction d'un kd-tree. En pseudo-code, les fonctions de construction classiques dont on veut connaître la complexité suivent cet algorithme~:
 \\\\
 $$function Arbre(Triangles T, Voxel V)
 	Si cas d'arrêt~:
@@ -37,6 +37,11 @@ $$function Arbre(Triangles T, Voxel V)
 	Calcul de T_g, T_d, V_g et V_d en fonction de p
 	retourne Nœud(p, Arbre(T_g, V_g), Arbre(T_d, V_d))$$
 \\\\
+Ceci nous amène à la formule de complexité suivante~:
+\\\\
+$T(N) = T_{TrouverPlan}(N) + 2T(\frac{N}{2})$
+\\\\
+où $N$ est le nombre de triangles. Le point déterminant sur lequel nous pouvons jouer est donc la fonction $TrouverPlan$. Conformément à ce qui est dit plus haut, nous devons trouver les plans  
 
 Le principe de l'algorithme initial étudié est le suivant, étape par étape~:
 \begin{enumerate}
