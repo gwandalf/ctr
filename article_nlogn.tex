@@ -26,6 +26,7 @@ La proposition d'algorithme est tirée d'un algorithme en $O(N.log²(N))$ ré-ad
 
 %TODO formule du coût.
 
+On doit considérer que pour un voxel de dimensions données et non coupé, son côut de traversée dépend uniquement du nombre de triangles qu'il contient.
 Des considérations heuristiques permettent de définir un ensemble de plans candidats, à partir desquels sera choisi le plan minimisant le coût. L'idée de base pour trouver les candidats est de ne sélectionner que les plans qui délimitent les AABB\footnote{Axis Aligned Bounding Box} des triangles, car ce sont les endroits où le nombre de triangles change d'un c\^oté et de l'autre du plan, ce qui provoque des sauts dans la fonction de co\^ut. Les minimums sont donc à chercher à ces positions.
 
 Puisque l'on veut connaître la complexité de nos algorithmes, commençons par identifier les grandes étapes d'un algorithme de construction d'un kd-tree. En pseudo-code, les fonctions de construction classiques dont on veut connaître la complexité suivent cet algorithme~:
@@ -41,7 +42,31 @@ Ceci nous amène à la formule de complexité suivante~:
 \\\\
 $T(N) = T_{TrouverPlan}(N) + 2T(\frac{N}{2})$
 \\\\
-où $N$ est le nombre de triangles. Le point déterminant sur lequel nous pouvons jouer est donc la fonction $TrouverPlan$. Conformément à ce qui est dit plus haut, nous devons trouver les plans  
+où $N$ est le nombre de triangles. Le point déterminant sur lequel nous pouvons jouer est donc la fonction $TrouverPlan$. Conformément à ce qui est dit plus haut, nous devons trouver les plans candidats et calculer pour chacun d'entre eux le coût de traversée du voxel coupé. Le plan qui donne le coût minimal sera choisi. L'approche naïve donnerait l'algorithme suivant~:
+\\\\
+$$function TrouverPlan(Triangles T, Voxel V)
+	entier min = MAX_INT
+	Plan p_{res}
+	Pour chaque triangle t de T~:
+		P = {6 faces de l'AABB}
+		Pour chaque plan p de P~:
+			N_g = NbTrianglesAGauche(T, p)
+			N_d = NbTrianglesADroite(T, p)
+			N_p = NbTrianglesCoplanaires(T, p)
+			coût = SAH(V, p, N_g, N_d)
+			Si coût < min~:
+				min = coût
+				p_{res} = p
+	retourne p_{res}$$
+\\\\
+Il est évident que la complexité des fonctions de comptage est de $O(N)$. La complexité totale de cette implémentation naïve de $TrouverPlan$ est donc de $O(N^2)$. Nous devrions réduire cette complexité. Les auteurs de l'article ont remarqué que le meilleur plan peut être trouvé en un temps linéaire. Le principe de base est le suivant~: pour une même dimension $x$, si on trie les plans selon leur position de gauche à droite, il devient facile de compter le nombre de triangles de chaque côté d'un plan récursivement~:
+\begin{enumerate}
+	\item $N_g^{(i)}$~: il ne peut qu'augmenter. Pour un plan $plan_i$, $N_g^{(i)}$ = $N_g^{(i-1)} + N_p^{(i-1)} + $ nombre de triangles "commençant" au plan $plan^{(i-1)}$
+	\item $N_d^{(i)}$~: il ne peut que diminuer. Pour un plan $plan_i$, $N_d^{(i)}$ = $N_d^{(i-1)} - N_p^{(i)} - $ nombre de triangles "se terminant" au plan $plan_i$ 
+	\item Pour tout $i$, $N_p^(i)$ doit \^etre calculé préalablement.
+\end{enumerate}
+
+
 
 Le principe de l'algorithme initial étudié est le suivant, étape par étape~:
 \begin{enumerate}
