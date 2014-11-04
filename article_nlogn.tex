@@ -66,7 +66,21 @@ Il est évident que la complexité des fonctions de comptage est de $O(N)$. La c
 	\item Pour tout $i$, $N_p^(i)$ doit \^etre calculé préalablement.
 \end{enumerate}
 
+En pratique, il n'est pas possible d'implémenter ces suites avec des simples tableaux. Les auteurs de l'article proposent de définir une nouvelle structure de données, l'événement, qui contient les trois champs suivants~:
+\begin{enumerate}
+	\item Triangle associé t
+	\item Position du plan associé \epsilon
+	\item Type $type$~: indique si t "commence", "se termine" ou est coplanaire au plan \epsilon. Ces types seront respectivement codés +, - et |.
+\end{enumerate}
 
+Pour une dimension $k$ donnée, on construira une liste $E$ d'événements de la manière suivante~: Pour chaque triangle $t$, on générera tous les événements associant ce triangle à un plan candidat "en contact" et on précisera la nature de ce contact (+, - ou |). Cette construction a une complexité temporelle de $O(N)$. Par soucis de concision, nous ne donnerons pas les détails du calcul ici. La liste $E$ devra ensuite être triée, ce qui donne une complexité de $O(NlogN)$ avec un tri rapide. Le critère de tri est le suivant~: soient deux événements $e_1$ = ($t_1$, $\epsilon_1$, $type_1$) et $e_2$ = ($t_2$, $\epsilon_2$, $type_2$). Si $\epsilon_1 \inf \epsilon_2$, alors $e_1 \inf e_2$. En cas d'égalité, on utilise un ordre arbitraire sur +, - et |. Les auteurs de l'article proposent - \inf | \inf +.
+
+Ceci nous permet de réécrire la fonction $TrouverPlan$~:
+
+\\\\
+$$E = \emptyset
+  $$
+\\\\
 
 Le principe de l'algorithme initial étudié est le suivant, étape par étape~:
 \begin{enumerate}
