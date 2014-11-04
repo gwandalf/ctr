@@ -22,11 +22,21 @@
 
 L'article présente un algorithme permettant de construire des kd-Trees efficaces avec une complexité de $O(N.log(N))$. Les auteurs partent du constat qu'on cherche en général à construires des kd-Trees efficaces pour la recherche dans un espace à $k$ dimensions, sans prendre en compte le temps de construction du kd-Tree. Il est vrai que ceci n'est pas un gros problème pour des petits espaces. Cependant, les espaces deviennent de plus en plus grands et de plus en plus denses, ce qui met eu premier plan la nécessité de disposer d'algorithmes rapides. Or, la plupart des algorithmes utilisés aujourd'hui ont une complexité de $O(Nlog²N)$ ou même de $O(N²)$. Il est dit que la limite inférieure théoriquement atteignable est $O(N.log(N))$.
 
-La proposition d'algorithme est tirée d'un algorithme en $O(N.log²(N))$ ré-adapté. Comme pour tous les algorithmes, de construction de kd-Trees, ce qui est déterminant est la recherche du plan séparateur en chaque noeud. Pour ce faire, il faut trouver un plan aligné sur un des axes de la base du repère qui minimise le côut estimé de traversée des deux voxels. L'approche utilisée pour calculer ce coût est l'heuristique SAH\footnote{Surface Area Heuristique}. Le coût alors calculé est~:
+La proposition d'algorithme est tirée d'un algorithme en $O(N.log²(N))$ ré-adapté. Comme pour tous les algorithmes, de construction de kd-trees, ce qui est déterminant est la recherche du plan séparateur en chaque noeud. Pour ce faire, il faut trouver un plan aligné sur un des axes de la base du repère qui minimise le côut estimé de traversée des deux voxels. L'approche utilisée pour calculer ce coût est l'heuristique SAH\footnote{Surface Area Heuristique}. Le coût alors calculé est~:
 
 %TODO formule du coût.
 
-Des considérations heuristiques permettent de définir un ensemble de plans candidats, à partir desquels sera choisi le plan minimisant le coût. L'idée de base pour trouver les candidats est de ne sélectionner que les plans qui délimitent les AABB\footnote{Axis Aligned Bounding Box}, car ce sont les endroits où le nombre de triangles change d'un c\^oté et de l'autre du plan, ce qui provoque des sauts dans la fonction de co\^ut. Les minimums sont donc à chercher à ces positions.
+Des considérations heuristiques permettent de définir un ensemble de plans candidats, à partir desquels sera choisi le plan minimisant le coût. L'idée de base pour trouver les candidats est de ne sélectionner que les plans qui délimitent les AABB\footnote{Axis Aligned Bounding Box} des triangles, car ce sont les endroits où le nombre de triangles change d'un c\^oté et de l'autre du plan, ce qui provoque des sauts dans la fonction de co\^ut. Les minimums sont donc à chercher à ces positions.
+
+Puisque l'on veut connaître la complexité de nos algorithmes, commençons par identifier les grandes étapes d'un algorithme de construction d'un kd-tree. Nous retrouverons toujours les mêmes, seule l'implémentation des fonctions définies changera. En pseudo-code, la fonction de construction dont on veut connaître la complexité est~:
+\\\\
+$$function Arbre(Triangles T, Voxel V)
+	Si cas d'arrêt~:
+		retourne Feuille(T)
+	Plan p = TrouverPlan(T, V)
+	Calcul de T_g, T_d, V_g et V_d en fonction de p
+	retourne Nœud(p, Arbre(T_g, V_g), Arbre(T_d, V_d))$$
+\\\\
 
 Le principe de l'algorithme initial étudié est le suivant, étape par étape~:
 \begin{enumerate}
