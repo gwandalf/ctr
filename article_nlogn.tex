@@ -75,17 +75,27 @@ En pratique, il n'est pas possible d'implémenter ces suites avec des simples ta
 
 Pour une dimension $k$ donnée, on construira une liste $E$ d'événements de la manière suivante~: Pour chaque triangle $t$, on générera tous les événements associant ce triangle à un plan candidat "en contact" et on précisera la nature de ce contact (+, - ou |). Cette construction a une complexité temporelle de $O(N)$. Par soucis de concision, nous ne donnerons pas les détails du calcul ici. La liste $E$ devra ensuite être triée, ce qui donne une complexité de $O(NlogN)$ avec un tri rapide. Le critère de tri est le suivant~: soient deux événements $e_1$ = ($t_1$, $\epsilon_1$, $type_1$) et $e_2$ = ($t_2$, $\epsilon_2$, $type_2$). Si $\epsilon_1 \inf \epsilon_2$, alors $e_1 \inf e_2$. En cas d'égalité, on utilise un ordre arbitraire sur +, - et |. Les auteurs de l'article proposent - \inf | \inf +.
 
+On remarque alors que tous les événements de même plan sont contigüs. On pourra alors virtuellement subdiviser la liste en groupes, chacun étiqueté par un plan.
+
 Ceci nous permet de réécrire la fonction $TrouverPlan$~:
-
 \\\\
-$$E = \emptyset
-  $$
+$$function TrouverPlan(Triangles T, Voxel V)
+	entier min = MAX_INT
+	Plan p_{res}
+	Pour k = 1, 2, 3~:
+		E = InitListeEvenements(k, T, V)
+		trier(E)
+		N_g = 0, N_p = 0, N_d = taille(T)
+		Pour tous les groupes g_{\epsilon} de E, pris dans l'ordre~:
+			nb_-, nb_|, nb_+ = compterTypes(g_{\epsilon})
+			%TODO : copié coller de l'article
+	retourne p_{res}$$
 \\\\
 
-Le principe de l'algorithme initial étudié est le suivant, étape par étape~:
-\begin{enumerate}
-	\item Avant de conbstruire l'arbre, pour chaque dimension de l'espace, on cherche les plans candidats
-\end{enumerate}
+\subsection{A rédiger correctement...}
+L'optimisation permettant d'atteindre O(NlogN) ne nécessite pas grand chose. En fait, il suffit de se rendre compte que sortie le tri des appels récursifs (la faire avant la construction de l'arbre), nous permet d'améliorer la complexité (Note pour moi m^eme : ne pas en dire plus que cela. L'idée c'est de juste mettre ne évidence le fait que cette petite astuce suffit).
+
+
 
 \section{Some \LaTeX{} Examples}
 \label{sec:examples}
