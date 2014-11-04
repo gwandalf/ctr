@@ -95,7 +95,22 @@ $$function TrouverPlan(Triangles T, Voxel V)
 \subsection{A rédiger correctement...}
 L'optimisation permettant d'atteindre O(NlogN) ne nécessite pas grand chose. En fait, il suffit de se rendre compte que sortie le tri des appels récursifs (la faire avant la construction de l'arbre), nous permet d'améliorer la complexité (Note pour moi m^eme : ne pas en dire plus que cela. L'idée c'est de juste mettre ne évidence le fait que cette petite astuce suffit).
 
+Pour les tests on peut simplement commenter un peu et formuler les critiques suivantes :
+(-) pas de comparaison avec d'autres approches (vérifier les dates et l'état de l'art)
+(-) beaucoup de colonnes ne sont pas très intéressantes (N_l, N_r etc...)
+(-) pas de scènes dynamiques
 
+sur l'article :
+(+) démonstration très complète et rigoureuse.
+(~) pas d'utilisation du parallélisme (ce serait encore mieux)
+
+autres remarques, en vrac :
+Première impression est très positive : la démarche est très rigoureuse et du recul est pris par rapport aux (bons) résultats (expliquer). Le fait que l'algorithme ait prouvé sa valeur dans l'industrie est un argument solide en sa faveur. Dommage quand même que les résultats de performances des traversées des kd-trees ne soient pas présentés (c'est vrai que ce n'est pas le sujet de l'article mais c'est l'essentiel pour les kd-trees).
+	Pas de comparaison en terme place de mémoire prise par les structures de données. Il serait intéressant d'avoir cette information (faire l'expérience pour connaitre cela et donner les conclusions).
+	Part du principe que SAH est la meilleure approche. Existe-t-il d'autres approches reconnues plus rapides (mais certainement pas de meilleure complexité) ?
+	La limite théorique de O(NlogN) n'est pas claire : il est dit que cela est dû au tri mais qui a dit que pour être "intelligent", il fallait absolument implémenter un tri ?
+	
+%TODO faire des recherches pour appuyer / infirmer ces critiques, tirer des critiques de la mise en oeuvre pratique.
 
 \section{Some \LaTeX{} Examples}
 \label{sec:examples}
