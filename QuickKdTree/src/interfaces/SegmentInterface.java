@@ -1,6 +1,6 @@
 package interfaces;
 
-public interface SegmentInterface {
+public interface SegmentInterface extends GeometricElement {
 
 	SceneInterface getScene();
 	SceneInterface setScene();

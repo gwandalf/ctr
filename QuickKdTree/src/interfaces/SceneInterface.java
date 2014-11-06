@@ -1,6 +1,6 @@
 package interfaces;
 
-public interface SceneInterface {
+public interface SceneInterface extends Delimitable {
 
 	void addSegment(SegmentInterface segment);
 	

@@ -1,10 +1,7 @@
 package interfaces;
 
-public interface RayInterface {
+public interface RayInterface extends Delimitable {
 
-	PointInterface getOrigin();
-	void setOrigin(PointInterface origin);
-	PointInterface getEnd();
-	void setEnd(PointInterface end);
+	
 	
 }

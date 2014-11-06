@@ -1,5 +1,5 @@
 package interfaces;
 
-public interface GeometricElement {
+public interface GeometricElement extends Delimitable {
 
 }
