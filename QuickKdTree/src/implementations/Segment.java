@@ -5,6 +5,11 @@ import interfaces.RayInterface;
 import interfaces.SceneInterface;
 import interfaces.SegmentInterface;
 
+/**
+ * Segment (equivalent of the 3D triangle).
+ * @author gwlemoul
+ *
+ */
 public class Segment implements SegmentInterface {
 
 	@Override

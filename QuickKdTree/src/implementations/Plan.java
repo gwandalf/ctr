@@ -2,8 +2,26 @@ package implementations;
 
 import interfaces.PlanInterface;
 
+/**
+ * Splitting plan
+ * @author gwlemoul
+ *
+ */
 public class Plan implements PlanInterface {
 
+	private char dim;
+	private int value;
+	
+	/**
+	 * Constructor
+	 * @param dim
+	 * @param value
+	 */
+	public Plan(char dim, int value) {
+		this.dim = dim;
+		this.value = value;
+	}
+	
 	@Override
 	public char getDim() {
 		// TODO Auto-generated method stub

@@ -28,6 +28,12 @@ public class Event implements EventInterface {
 	}
 	
 	@Override
+	public boolean inf(EventInterface e) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	
+	@Override
 	public SegmentInterface getSegment() {
 		return segment;
 	}
