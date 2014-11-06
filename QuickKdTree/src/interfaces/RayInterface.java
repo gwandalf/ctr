@@ -7,6 +7,10 @@ package interfaces;
  */
 public interface RayInterface extends Delimitable {
 
-	
+	/**
+	 * Getter
+	 * @return corresponding affine function.
+	 */
+	AffineInterface getAffine();
 	
 }

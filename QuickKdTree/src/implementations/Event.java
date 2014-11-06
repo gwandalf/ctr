@@ -1,7 +1,7 @@
 package implementations;
 
 import interfaces.EventInterface;
-import interfaces.PlanInterface;
+import interfaces.PlaneInterface;
 import interfaces.SegmentInterface;
 
 /**
@@ -12,7 +12,7 @@ import interfaces.SegmentInterface;
 public class Event implements EventInterface {
 
 	private Segment segment;
-	private Plan plan;
+	private Plane plan;
 	private char type;
 	
 	/**
@@ -21,7 +21,7 @@ public class Event implements EventInterface {
 	 * @param plan
 	 * @param type
 	 */
-	public Event(Segment segment, Plan plan, char type) {
+	public Event(Segment segment, Plane plan, char type) {
 		this.segment = segment;
 		this.plan = plan;
 		this.type = type;
@@ -44,13 +44,13 @@ public class Event implements EventInterface {
 	}
 
 	@Override
-	public PlanInterface getPlan() {
+	public PlaneInterface getPlan() {
 		return plan;
 	}
 
 	@Override
-	public void setPlan(PlanInterface plan) {
-		this.plan = (Plan) plan;
+	public void setPlan(PlaneInterface plan) {
+		this.plan = (Plane) plan;
 	}
 
 	@Override

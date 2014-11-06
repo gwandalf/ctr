@@ -8,6 +8,13 @@ package interfaces;
 public interface SegmentInterface extends GeometricElement {
 
 	/**
+	 * Splits the current segment according to the current plane.
+	 * @param plane
+	 * @return Two resulting segments.
+	 */
+	SegmentInterface[] split(PlaneInterface plane);
+	
+	/**
 	 * Getter
 	 * @return owner scene
 	 */
@@ -18,5 +25,11 @@ public interface SegmentInterface extends GeometricElement {
 	 * @param scene
 	 */
 	void setScene(SceneInterface scene);
+	
+	/**
+	 * Getter
+	 * @return corresponding affine function.
+	 */
+	AffineInterface getAffine();
 	
 }

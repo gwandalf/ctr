@@ -6,7 +6,7 @@ package interfaces;
  *
  */
 public interface Delimitable {
-
+	
 	/**
 	 * Getter
 	 * @return origin

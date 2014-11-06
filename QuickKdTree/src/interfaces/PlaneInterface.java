@@ -5,7 +5,7 @@ package interfaces;
  * @author gwlemoul
  *
  */
-public interface PlanInterface {
+public interface PlaneInterface {
 
 	/**
 	 * Getter

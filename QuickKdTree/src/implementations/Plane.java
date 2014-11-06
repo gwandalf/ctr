@@ -1,13 +1,13 @@
 package implementations;
 
-import interfaces.PlanInterface;
+import interfaces.PlaneInterface;
 
 /**
  * Splitting plan
  * @author gwlemoul
  *
  */
-public class Plan implements PlanInterface {
+public class Plane implements PlaneInterface {
 
 	private char dim;
 	private int value;
@@ -17,33 +17,30 @@ public class Plan implements PlanInterface {
 	 * @param dim
 	 * @param value
 	 */
-	public Plan(char dim, int value) {
-		this.dim = dim;
+	public Plane(char dim, int value) {
+		this.setDim(dim);
 		this.value = value;
 	}
 	
 	@Override
 	public char getDim() {
-		// TODO Auto-generated method stub
-		return 0;
+		return dim;
 	}
 
 	@Override
 	public void setDim(char dim) {
-		// TODO Auto-generated method stub
-
+		if(dim == 'x' || dim == 'y')
+			this.dim = dim;
 	}
 
 	@Override
 	public int getValue() {
-		// TODO Auto-generated method stub
-		return 0;
+		return value;
 	}
 
 	@Override
 	public void setValue(int value) {
-		// TODO Auto-generated method stub
-
+		this.value = value;
 	}
 
 }
