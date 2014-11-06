@@ -1,45 +1,38 @@
 package implementations;
 
-import interfaces.PointInterface;
 import interfaces.SceneInterface;
 import interfaces.SegmentInterface;
 
-public class Scene implements SceneInterface {
+import java.util.ArrayList;
+import java.util.List;
 
-	@Override
-	public PointInterface getOrigin() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+/**
+ * 2D Scene
+ * @author gwlemoul
+ *
+ */
+public class Scene extends Delimitable implements SceneInterface {
 
-	@Override
-	public void setOrigin(PointInterface origin) {
-		// TODO Auto-generated method stub
+	protected List<Segment> segments;
 
-	}
-
-	@Override
-	public PointInterface getEnd() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void setEnd(PointInterface end) {
-		// TODO Auto-generated method stub
-
+	/**
+	 * Constructor
+	 * @param origin
+	 * @param end
+	 */
+	public Scene(Point origin, Point end) {
+		super(origin, end);
+		this.segments = new ArrayList<Segment>();
 	}
 
 	@Override
 	public void addSegment(SegmentInterface segment) {
-		// TODO Auto-generated method stub
-
+		this.segments.add((Segment)segment);
 	}
 
 	@Override
 	public SegmentInterface getSegment(int i) {
-		// TODO Auto-generated method stub
-		return null;
+		return this.segments.get(i);
 	}
 
 }
