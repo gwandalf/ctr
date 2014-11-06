@@ -15,6 +15,9 @@ public class EventList implements EventListInterface {
 
 	private List<Event> eventList;
 	
+	/**
+	 * Constructor
+	 */
 	public EventList() {
 		this.eventList = new ArrayList<Event>();
 	}

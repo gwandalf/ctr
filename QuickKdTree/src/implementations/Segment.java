@@ -2,7 +2,6 @@ package implementations;
 
 import interfaces.AffineInterface;
 import interfaces.PlaneInterface;
-import interfaces.PointInterface;
 import interfaces.RayInterface;
 import interfaces.SceneInterface;
 import interfaces.SegmentInterface;
@@ -12,11 +11,9 @@ import interfaces.SegmentInterface;
  * @author gwlemoul
  *
  */
-public class Segment implements SegmentInterface {
+public class Segment extends Delimitable implements SegmentInterface {
 
 	private int innerCost;
-	private Point origin;
-	private Point end;
 	private Scene scene;
 	private Affine affine;
 	
@@ -26,8 +23,7 @@ public class Segment implements SegmentInterface {
 	 * @param end
 	 */
 	public Segment(Point origin, Point end, Scene scene) {
-		this.origin = origin;
-		this.end = end;
+		super(origin, end);
 		this.innerCost = 1;
 		this.scene = scene;
 	}
@@ -52,26 +48,6 @@ public class Segment implements SegmentInterface {
 	@Override
 	public void setInnerCost(int innerCost) {
 		this.innerCost = innerCost;
-	}
-
-	@Override
-	public PointInterface getOrigin() {
-		return this.origin;
-	}
-
-	@Override
-	public void setOrigin(PointInterface origin) {
-		this.origin = (Point)origin;
-	}
-
-	@Override
-	public PointInterface getEnd() {
-		return this.end;
-	}
-
-	@Override
-	public void setEnd(PointInterface end) {
-		this.end = (Point) end;
 	}
 
 	@Override

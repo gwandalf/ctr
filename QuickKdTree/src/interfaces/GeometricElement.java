@@ -5,7 +5,7 @@ package interfaces;
  * @author gwlemoul
  *
  */
-public interface GeometricElement extends Delimitable {
+public interface GeometricElement extends DelimitableInterface {
 	
 	/**
 	 * Tells if the current object is the next to be crossed by the given ray.

@@ -5,7 +5,7 @@ package interfaces;
  * @author gwlemoul
  *
  */
-public interface SceneInterface extends Delimitable {
+public interface SceneInterface extends DelimitableInterface {
 
 	/**
 	 * Adds a segment to the scene.

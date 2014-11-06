@@ -5,7 +5,7 @@ package interfaces;
  * @author gwlemoul
  *
  */
-public interface RayInterface extends Delimitable {
+public interface RayInterface extends DelimitableInterface {
 
 	/**
 	 * Getter
