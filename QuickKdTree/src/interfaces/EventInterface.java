@@ -30,15 +30,15 @@ public interface EventInterface {
 	
 	/**
 	 * Getter
-	 * @return plan
+	 * @return plane
 	 */
-	PlaneInterface getPlan();
+	PlaneInterface getPlane();
 	
 	/**
 	 * Setter
-	 * @param plan
+	 * @param plane
 	 */
-	void setPlan(PlaneInterface plan);
+	void setPlane(PlaneInterface plane);
 	
 	/**
 	 * Getter

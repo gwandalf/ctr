@@ -2,30 +2,69 @@ package implementations;
 
 import interfaces.PointInterface;
 
+/**
+ * 2D point
+ * @author gwendal
+ *
+ */
 public class Point implements PointInterface {
+
+	private int x;
+	private int y;
+	
+	/**
+	 * Constructor
+	 * @param x
+	 * @param y
+	 */
+	public Point(int x, int y) {
+		this.x = x;
+		this.y = y;
+	}
+	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + x;
+		result = prime * result + y;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Point other = (Point) obj;
+		if (x != other.x)
+			return false;
+		if (y != other.y)
+			return false;
+		return true;
+	}
 
 	@Override
 	public int getX() {
-		// TODO Auto-generated method stub
-		return 0;
+		return x;
 	}
 
 	@Override
 	public void setX(int x) {
-		// TODO Auto-generated method stub
-
+		this.x = x;
 	}
 
 	@Override
 	public int getY() {
-		// TODO Auto-generated method stub
-		return 0;
+		return y;
 	}
 
 	@Override
 	public void setY(int y) {
-		// TODO Auto-generated method stub
-
+		this.y = y;
 	}
 
 }
