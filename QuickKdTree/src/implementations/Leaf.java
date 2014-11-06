@@ -20,4 +20,10 @@ public class Leaf extends Node implements LeafInterface {
 		return null;
 	}
 
+	@Override
+	public void buildChildren() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

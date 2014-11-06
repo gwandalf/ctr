@@ -38,4 +38,9 @@ public interface EventListInterface {
 	 * @return merged list.
 	 */
 	EventListInterface merge(EventListInterface e);
+	
+	/**
+	 * Sorts the list.
+	 */
+	void sort();
 }

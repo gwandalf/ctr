@@ -12,7 +12,7 @@ import interfaces.SegmentInterface;
  * @author gwendal
  *
  */
-public class Node extends Scene implements NodeInterface {
+public abstract class Node extends Scene implements NodeInterface {
 
 	protected int innerCost;
 	private Node leftChild;
@@ -54,12 +54,6 @@ public class Node extends Scene implements NodeInterface {
 	public LeafInterface nextVoxel(RayInterface ray) {
 		// TODO Auto-generated method stub
 		return null;
-	}
-
-	@Override
-	public void buildChildren() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
