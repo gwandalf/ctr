@@ -62,4 +62,32 @@ public class Affine implements AffineInterface {
 		return this.p;
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		long temp;
+		temp = Double.doubleToLongBits(m);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(p);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Affine other = (Affine) obj;
+		if (Double.doubleToLongBits(m) != Double.doubleToLongBits(other.m))
+			return false;
+		if (Double.doubleToLongBits(p) != Double.doubleToLongBits(other.p))
+			return false;
+		return true;
+	}
+
 }
