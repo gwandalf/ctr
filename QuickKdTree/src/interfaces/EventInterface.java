@@ -6,7 +6,7 @@ package interfaces;
  *
  */
 public interface EventInterface {
-
+	
 	/**
 	 * Getter
 	 * @return segment
@@ -30,5 +30,17 @@ public interface EventInterface {
 	 * @param plan
 	 */
 	void setPlan(PlanInterface plan);
+	
+	/**
+	 * Getter
+	 * @return type : +, | or -
+	 */
+	char getType();
+	
+	/**
+	 * Setter
+	 * @param type : +, | or -
+	 */
+	void setType(char type);
 	
 }
