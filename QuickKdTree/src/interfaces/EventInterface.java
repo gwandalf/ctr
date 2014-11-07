@@ -42,14 +42,20 @@ public interface EventInterface {
 	
 	/**
 	 * Getter
-	 * @return type : +, | or -
+	 * @return type : END, PLANAR or START
 	 */
-	char getType();
+	EventType getType();
 	
 	/**
 	 * Setter
-	 * @param type : +, | or -
+	 * @param type : END, PLANAR or START
 	 */
-	void setType(char type);
+	void setType(EventType type);
+	
+	public static enum EventType {
+		END,
+		PLANAR,
+		START
+	}
 	
 }

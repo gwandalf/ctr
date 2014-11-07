@@ -11,13 +11,13 @@ public interface PlaneInterface {
 	 * Getter
 	 * @return dimension
 	 */
-	char getDim();
+	int getDim();
 	
 	/**
 	 * Setter
 	 * @param dim
 	 */
-	void setDim(char dim);
+	void setDim(int dim);
 	
 	/**
 	 * Getter

@@ -9,7 +9,7 @@ import interfaces.PlaneInterface;
  */
 public class Plane implements PlaneInterface {
 
-	private char dim;
+	private int dim;
 	private int value;
 	
 	/**
@@ -17,19 +17,19 @@ public class Plane implements PlaneInterface {
 	 * @param dim
 	 * @param value
 	 */
-	public Plane(char dim, int value) {
+	public Plane(int dim, int value) {
 		this.setDim(dim);
 		this.value = value;
 	}
 	
 	@Override
-	public char getDim() {
+	public int getDim() {
 		return dim;
 	}
 
 	@Override
-	public void setDim(char dim) {
-		if(dim == 'x' || dim == 'y')
+	public void setDim(int dim) {
+		if(dim == 1 || dim == 2)
 			this.dim = dim;
 	}
 

@@ -13,7 +13,7 @@ public class Event implements EventInterface {
 
 	private Segment segment;
 	private Plane plane;
-	private char type;
+	private EventType type;
 	
 	/**
 	 * Constructor
@@ -21,7 +21,7 @@ public class Event implements EventInterface {
 	 * @param plan
 	 * @param type
 	 */
-	public Event(Segment segment, Plane plane, char type) {
+	public Event(Segment segment, Plane plane, EventType type) {
 		this.segment = segment;
 		this.plane = plane;
 		this.type = type;
@@ -29,7 +29,13 @@ public class Event implements EventInterface {
 	
 	@Override
 	public boolean inf(EventInterface e) {
-		// TODO Auto-generated method stub
+		if(this.plane.getValue() < e.getPlane().getValue() ||
+			(this.plane.getValue() == e.getPlane().getValue()
+			&& this.plane.getDim() < e.getPlane().getDim()) ||
+			(this.plane.getValue() == e.getPlane().getValue()
+			&& this.plane.getDim() == e.getPlane().getDim()
+			&& this.type.ordinal() < e.getType().ordinal()))
+			return true;
 		return false;
 	}
 	
@@ -54,14 +60,13 @@ public class Event implements EventInterface {
 	}
 
 	@Override
-	public char getType() {
-		return type;
+	public EventType getType() {
+		return this.type;
 	}
 
 	@Override
-	public void setType(char type) {
-		if(type == '+' || type == '-' || type == '|')
-			this.type = type;
+	public void setType(EventType type) {
+		this.type = type;
 	}
-
+	
 }
