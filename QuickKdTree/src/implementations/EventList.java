@@ -8,6 +8,7 @@ import interfaces.PlaneInterface.Side;
 import interfaces.SegmentInterface.StrictSide;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -180,6 +181,12 @@ public class EventList implements EventListInterface {
 	public EventListInterface[] clipSegments() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@SuppressWarnings("rawtypes")
+	@Override
+	public Collection getEventList() {
+		return eventList;
 	}
 
 }

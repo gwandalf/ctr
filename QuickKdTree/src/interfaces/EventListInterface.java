@@ -1,5 +1,7 @@
 package interfaces;
 
+import java.util.Collection;
+
 /**
  * Event list.
  * @author gwendal
@@ -62,4 +64,11 @@ public interface EventListInterface {
 	 * @return two parts of the splitted list.
 	 */
 	EventListInterface[] clipSegments();
+	
+	/**
+	 * Getter
+	 * @return event list
+	 */
+	@SuppressWarnings("rawtypes")
+	Collection getEventList();
 }

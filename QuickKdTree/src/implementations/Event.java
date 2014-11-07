@@ -40,6 +40,40 @@ public class Event implements EventInterface {
 	}
 	
 	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((plane == null) ? 0 : plane.hashCode());
+		result = prime * result + ((segment == null) ? 0 : segment.hashCode());
+		result = prime * result + ((type == null) ? 0 : type.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Event other = (Event) obj;
+		if (plane == null) {
+			if (other.plane != null)
+				return false;
+		} else if (!plane.equals(other.plane))
+			return false;
+		if (segment == null) {
+			if (other.segment != null)
+				return false;
+		} else if (!segment.equals(other.segment))
+			return false;
+		if (type != other.type)
+			return false;
+		return true;
+	}
+
+	@Override
 	public SegmentInterface getSegment() {
 		return segment;
 	}

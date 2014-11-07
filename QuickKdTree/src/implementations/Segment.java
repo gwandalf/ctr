@@ -1,6 +1,7 @@
 package implementations;
 
 import interfaces.AffineInterface;
+import interfaces.EventInterface.EventType;
 import interfaces.EventListInterface;
 import interfaces.PlaneInterface;
 import interfaces.RayInterface;
@@ -69,8 +70,42 @@ public class Segment extends Delimitable implements SegmentInterface {
 	
 	@Override
 	public EventListInterface generateEvents() {
-		// TODO Auto-generated method stub
-		return null;
+		EventList res = new EventList();
+		Event ev1, ev2, ev3, ev4;
+		Plane p1, p2, p3, p4;
+		double minX = Math.min(this.origin.getX(), this.end.getX());
+		double maxX = Math.max(this.origin.getX(), this.end.getX());
+		double minY = Math.min(this.origin.getY(), this.end.getY());
+		double maxY = Math.max(this.origin.getY(), this.end.getY());
+		p1 = new Plane(1, minX);
+		p2 = new Plane(1, maxX);
+		p3 = new Plane(2, minY);
+		p4 = new Plane(2, maxY);
+		if(this.origin.getX() == this.end.getX()) {
+			ev1 = new Event(this, p1, EventType.PLANAR);
+			ev3 = new Event(this, p3, EventType.START);
+			ev4 = new Event(this, p4, EventType.END);
+			res.add(ev4);
+			res.add(ev1);
+			res.add(ev3);
+		} else if(this.origin.getY() == this.end.getY()) {
+			ev1 = new Event(this, p1, EventType.START);
+			ev2 = new Event(this, p2, EventType.END);
+			ev4 = new Event(this, p4, EventType.PLANAR);
+			res.add(ev2);
+			res.add(ev4);
+			res.add(ev1);
+		} else {
+			ev1 = new Event(this, p1, EventType.START);
+			ev2 = new Event(this, p2, EventType.END);
+			ev3 = new Event(this, p3, EventType.START);
+			ev4 = new Event(this, p4, EventType.END);
+			res.add(ev1);
+			res.add(ev2);
+			res.add(ev3);
+			res.add(ev4);
+		}
+		return res;
 	}
 	
 	@Override
