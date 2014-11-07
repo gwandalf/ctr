@@ -12,7 +12,13 @@ public interface SegmentInterface extends GeometricElement {
 	 * @param plane
 	 * @return Two resulting segments.
 	 */
-	EventListInterface[] split(PlaneInterface plane);
+	SegmentInterface[] split(PlaneInterface plane);
+	
+	/**
+	 * Generates events from the current segment.
+	 * @return Events from the current segment.
+	 */
+	EventListInterface generateEvents();
 	
 	/**
 	 * Getter

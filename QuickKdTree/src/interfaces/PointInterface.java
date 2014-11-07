@@ -11,24 +11,24 @@ public interface PointInterface {
 	 * Getter
 	 * @return x
 	 */
-	int getX();
+	double getX();
 	
 	/**
 	 * Setter
 	 * @param x
 	 */
-	void setX(int x);
+	void setX(double x);
 	
 	/**
 	 * Getter
 	 * @return y
 	 */
-	int getY();
+	double getY();
 	
 	/**
 	 * Setter
 	 * @param y
 	 */
-	void setY(int y);
+	void setY(double y);
 	
 }

@@ -40,7 +40,35 @@ public class Segment extends Delimitable implements SegmentInterface {
 	}
 	
 	@Override
-	public EventListInterface[] split(PlaneInterface plane) {
+	public SegmentInterface[] split(PlaneInterface plane) {
+		SegmentInterface[] res = new SegmentInterface[2];
+		Point bound;
+		if(plane.getDim() == 1) {
+			double y = this.getAffine().image(plane.getValue());
+			bound = new Point(plane.getValue(), y);
+			if(this.origin.getX() < this.end.getX()) {
+				res[0] = new Segment(this.origin, bound, this.scene);
+				res[1] = new Segment(bound, this.end, this.scene);
+			} else {
+				res[1] = new Segment(this.origin, bound, this.scene);
+				res[0] = new Segment(bound, this.end, this.scene);
+			}
+		} else {
+			double x = this.getAffine().antecedent(plane.getValue());
+			bound = new Point(x, plane.getValue());
+			if(this.origin.getY() < this.end.getY()) {
+				res[0] = new Segment(this.origin, bound, this.scene);
+				res[1] = new Segment(bound, this.end, this.scene);
+			} else {
+				res[1] = new Segment(this.origin, bound, this.scene);
+				res[0] = new Segment(bound, this.end, this.scene);
+			}
+		}
+		return res;
+	}
+	
+	@Override
+	public EventListInterface generateEvents() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -50,7 +78,7 @@ public class Segment extends Delimitable implements SegmentInterface {
 		// TODO Auto-generated method stub
 		return false;
 	}
-
+	
 	@Override
 	public int getInnerCost() {
 		return this.innerCost;
@@ -86,6 +114,11 @@ public class Segment extends Delimitable implements SegmentInterface {
 	@Override
 	public void setSide(StrictSide side) {
 		this.side = side;
+	}
+
+	@Override
+	public String toString() {
+		return "Segment [origin=" + origin + ", end=" + end + "]";
 	}
 
 }

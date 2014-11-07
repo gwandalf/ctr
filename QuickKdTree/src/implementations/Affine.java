@@ -11,6 +11,8 @@ public class Affine implements AffineInterface {
 
 	private double m;
 	private double p;
+	private Flag flag;
+	private double xValue;
 	
 	/**
 	 * Constructor
@@ -18,8 +20,15 @@ public class Affine implements AffineInterface {
 	 * @param p2 point 2
 	 */
 	public Affine(Point p1, Point p2) {
+		this.flag = Flag.OK;
+		if(p1.getX() == p2.getX())
+			this.flag = Flag.X;
+		if(p1.getY() == p2.getY())
+			this.flag = Flag.Y;
 		if(p2.getX() != p1.getX())
 			this.m = (p2.getY() - p1.getY())/(p2.getX() - p1.getX());
+		else
+			this.xValue = p1.getX();
 		this.p = p1.getY() - this.m * p1.getX();
 	}
 	
@@ -30,6 +39,8 @@ public class Affine implements AffineInterface {
 
 	@Override
 	public double antecedent(double y) {
+		if(this.flag == Flag.X)
+			return this.xValue;
 		if(this.m != 0)
 			return (y - this.p)/this.m;
 		else
@@ -88,6 +99,12 @@ public class Affine implements AffineInterface {
 		if (Double.doubleToLongBits(p) != Double.doubleToLongBits(other.p))
 			return false;
 		return true;
+	}
+	
+	private static enum Flag {
+		OK,
+		X,
+		Y
 	}
 
 }

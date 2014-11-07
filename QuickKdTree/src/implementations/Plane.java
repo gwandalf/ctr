@@ -10,7 +10,7 @@ import interfaces.PlaneInterface;
 public class Plane implements PlaneInterface {
 
 	private int dim;
-	private int value;
+	private double value;
 	private Side side;
 	
 	/**
@@ -18,7 +18,7 @@ public class Plane implements PlaneInterface {
 	 * @param dim
 	 * @param value
 	 */
-	public Plane(int dim, int value) {
+	public Plane(int dim, double value) {
 		this.setDim(dim);
 		this.value = value;
 	}
@@ -35,12 +35,12 @@ public class Plane implements PlaneInterface {
 	}
 
 	@Override
-	public int getValue() {
+	public double getValue() {
 		return value;
 	}
 
 	@Override
-	public void setValue(int value) {
+	public void setValue(double value) {
 		this.value = value;
 	}
 

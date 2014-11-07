@@ -23,13 +23,13 @@ public interface PlaneInterface {
 	 * Getter
 	 * @return position value
 	 */
-	int getValue();
+	double getValue();
 	
 	/**
 	 * Setter
 	 * @param value
 	 */
-	void setValue(int value);
+	void setValue(double value);
 	
 	/**
 	 * Getter
