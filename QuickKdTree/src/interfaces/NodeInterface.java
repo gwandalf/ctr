@@ -71,4 +71,16 @@ public interface NodeInterface extends GeometricElement {
 	 */
 	void setRightChild(NodeInterface rightChild);
 	
+	/**
+	 * Getter
+	 * @return splitting plane
+	 */
+	PlaneInterface getPlane();
+	
+	/**
+	 * Setter
+	 * @param plane Splitting plane
+	 */
+	void setPlane(PlaneInterface plane);
+	
 }

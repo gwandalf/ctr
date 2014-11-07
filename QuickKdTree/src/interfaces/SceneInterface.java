@@ -20,4 +20,10 @@ public interface SceneInterface extends DelimitableInterface {
 	 */
 	SegmentInterface getSegment(int i);
 	
+	/**
+	 * Size
+	 * @return size
+	 */
+	int size();
+	
 }

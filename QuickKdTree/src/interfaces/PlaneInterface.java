@@ -31,4 +31,21 @@ public interface PlaneInterface {
 	 */
 	void setValue(int value);
 	
+	/**
+	 * Getter
+	 * @return side
+	 */
+	Side getSide();
+	
+	/**
+	 * Setter
+	 * @param side
+	 */
+	void setSide(Side side);
+	
+	public static enum Side {
+		LEFT,
+		RIGHT
+	}
+	
 }

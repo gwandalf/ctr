@@ -15,8 +15,10 @@ import interfaces.SegmentInterface;
 public abstract class Node extends Scene implements NodeInterface {
 
 	protected int innerCost;
-	private Node leftChild;
-	private Node rightChild;
+	protected Node leftChild;
+	protected Node rightChild;
+	protected Plane plane;
+	
 	
 	/**
 	 * Constructor
@@ -92,6 +94,16 @@ public abstract class Node extends Scene implements NodeInterface {
 	@Override
 	public void setRightChild(NodeInterface rightChild) {
 		this.rightChild = (Node) rightChild;
+	}
+	
+	@Override
+	public PlaneInterface getPlane() {
+		return this.plane;
+	}
+	
+	@Override
+	public void setPlane(PlaneInterface plane) {
+		this.plane = (Plane)plane;
 	}
 
 }

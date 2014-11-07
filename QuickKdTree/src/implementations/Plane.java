@@ -11,6 +11,7 @@ public class Plane implements PlaneInterface {
 
 	private int dim;
 	private int value;
+	private Side side;
 	
 	/**
 	 * Constructor
@@ -41,6 +42,16 @@ public class Plane implements PlaneInterface {
 	@Override
 	public void setValue(int value) {
 		this.value = value;
+	}
+
+	@Override
+	public Side getSide() {
+		return this.side;
+	}
+
+	@Override
+	public void setSide(Side side) {
+		this.side = side;
 	}
 
 }

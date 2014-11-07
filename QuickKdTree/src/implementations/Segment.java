@@ -1,6 +1,7 @@
 package implementations;
 
 import interfaces.AffineInterface;
+import interfaces.EventListInterface;
 import interfaces.PlaneInterface;
 import interfaces.RayInterface;
 import interfaces.SceneInterface;
@@ -16,6 +17,7 @@ public class Segment extends Delimitable implements SegmentInterface {
 	private int innerCost;
 	private Scene scene;
 	private Affine affine;
+	private StrictSide side;
 	
 	/**
 	 * Constructor
@@ -37,7 +39,7 @@ public class Segment extends Delimitable implements SegmentInterface {
 	}
 	
 	@Override
-	public SegmentInterface[] split(PlaneInterface plane) {
+	public EventListInterface[] split(PlaneInterface plane) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -73,6 +75,16 @@ public class Segment extends Delimitable implements SegmentInterface {
 		if(this.affine == null)
 			this.affine = new Affine(this.origin, this.end);
 		return this.affine;
+	}
+
+	@Override
+	public StrictSide getSide() {
+		return this.side;
+	}
+
+	@Override
+	public void setSide(StrictSide side) {
+		this.side = side;
 	}
 
 }

@@ -35,4 +35,9 @@ public class Scene extends Delimitable implements SceneInterface {
 		return this.segments.get(i);
 	}
 
+	@Override
+	public int size() {
+		return segments.size();
+	}
+
 }

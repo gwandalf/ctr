@@ -21,14 +21,27 @@ public interface EventListInterface {
 	EventInterface get(int i);
 	
 	/**
+	 * Size
+	 * @return list size
+	 */
+	int size();
+	
+	/**
 	 * Splits the event list into two lists.
+	 * @param node Node giving the splitting plane and segments to classify.
 	 * @return two parts of the splitted list.
 	 */
-	EventListInterface[] split();
+	EventListInterface[] split(NodeInterface node);
+	
+	/**
+	 * Classifies the segment in the node according to the splitting plane.
+	 * @param node
+	 */
+	void classifyLeftRightBoth(NodeInterface node);
 	
 	/**
 	 * Splits the event list into two lists with no co-occurences.
-	 * @return
+	 * @return two parts of the splitted list.
 	 */
 	EventListInterface[] strictSplit();
 	
@@ -43,4 +56,10 @@ public interface EventListInterface {
 	 * Sorts the list.
 	 */
 	void sort();
+	
+	/**
+	 * Clips all the segments marked as BOTH and generates the resulting events.
+	 * @return two parts of the splitted list.
+	 */
+	EventListInterface[] clipSegments();
 }
