@@ -22,7 +22,7 @@ public class EventListTest {
 	static Plane p3 = new Plane(2, 0);
 	static Event e0 = new Event(segLeft, p3, EventType.END);
 	static Event e1 = new Event(segBoth, p1, EventType.END);
-	static Event e2 = new Event(segBoth, p1, EventType.PLANAR);
+	static Event e2 = new Event(segRight, p1, EventType.PLANAR);
 	static Event e3 = new Event(segLeft, p1, EventType.START);
 	static Event e4 = new Event(segRight, p2, EventType.END);
 	static EventList events = new EventList();
@@ -50,8 +50,10 @@ public class EventListTest {
 	}
 	
 	@Test
-	public void testStrictSort() {
+	public void testStrictSplit() {
 		EventListInterface[] eventsTab = events.strictSplit();
+		Assert.assertEquals(2, eventsTab[0].size());
+		Assert.assertEquals(2, eventsTab[1].size());
 		for(int i = 0 ; i < eventsTab[0].size() ; i++) {
 			Segment seg = (Segment)eventsTab[0].get(i).getSegment();
 			Assert.assertEquals(StrictSide.LEFTONLY, seg.getSide());
@@ -60,6 +62,18 @@ public class EventListTest {
 			Segment seg = (Segment)eventsTab[1].get(i).getSegment();
 			Assert.assertEquals(StrictSide.RIGHTONLY, seg.getSide());
 		}
+	}
+	
+	@Test
+	public void testMerge() {
+		events.sort();
+		EventListInterface[] eventsTab = events.strictSplit();
+		EventList evs = (EventList)eventsTab[0].merge(eventsTab[1]);
+		Assert.assertEquals(4, evs.size());
+		Assert.assertEquals(e0, evs.get(0));
+		Assert.assertEquals(e2, evs.get(1));
+		Assert.assertEquals(e3, evs.get(2));
+		Assert.assertEquals(e4, evs.get(3));
 	}
 
 }

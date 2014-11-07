@@ -64,11 +64,13 @@ public class EventList implements EventListInterface {
 	@Override
 	public EventListInterface merge(EventListInterface e) {
 		EventList res = new EventList();
+		Event e1;
+		Event e2;
 		int i = 0;
 		int j = 0;
-		while(i + j < this.size() + e.size()) {
-			Event e1 = this.eventList.get(i);
-			Event e2 = (Event)e.get(j);
+		while(i < this.size() && j < e.size()) {
+			e1 = this.eventList.get(i);
+			e2 = (Event)e.get(j);
 			if(e1.inf(e2)) {
 				res.add(e1);
 				i++;
@@ -77,6 +79,16 @@ public class EventList implements EventListInterface {
 				res.add(e2);
 				j++;
 			}
+		}
+		while(i < this.size()) {
+			e1 = this.eventList.get(i);
+			res.add(e1);
+			i++;
+		}
+		while(j < e.size()) {
+			e2 = (Event)e.get(j);
+			res.add(e2);
+			j++;
 		}
 		return res;
 	}
