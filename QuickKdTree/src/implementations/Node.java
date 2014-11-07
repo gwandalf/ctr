@@ -1,5 +1,8 @@
 package implementations;
 
+import java.util.Iterator;
+import java.util.Set;
+
 import interfaces.LeafInterface;
 import interfaces.NodeInterface;
 import interfaces.PlaneInterface;
@@ -19,7 +22,6 @@ public abstract class Node extends Scene implements NodeInterface {
 	protected Node rightChild;
 	protected Plane plane;
 	
-	
 	/**
 	 * Constructor
 	 * @param origin
@@ -29,7 +31,7 @@ public abstract class Node extends Scene implements NodeInterface {
 		super(origin, end);
 		this.innerCost = 2;
 	}
-
+	
 	@Override
 	public boolean isNextCrossed(RayInterface ray) {
 		// TODO Auto-generated method stub
@@ -74,6 +76,12 @@ public abstract class Node extends Scene implements NodeInterface {
 	public PlaneInterface findPlane() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void classifyLeftRightBoth() {
+		// TODO Auto-generated method stub
+		
 	}
 
 	@Override

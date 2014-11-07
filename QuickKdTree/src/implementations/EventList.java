@@ -5,10 +5,10 @@ import interfaces.EventInterface.EventType;
 import interfaces.EventListInterface;
 import interfaces.NodeInterface;
 import interfaces.PlaneInterface.Side;
+import interfaces.SegmentInterface;
 import interfaces.SegmentInterface.StrictSide;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -18,13 +18,13 @@ import java.util.List;
  */
 public class EventList implements EventListInterface {
 
-	private List<Event> eventList;
+	private List<EventInterface> eventList;
 	
 	/**
 	 * Constructor
 	 */
 	public EventList() {
-		this.eventList = new ArrayList<Event>();
+		this.eventList = new ArrayList<EventInterface>();
 	}
 	
 	@Override
@@ -38,22 +38,13 @@ public class EventList implements EventListInterface {
 	}
 
 	@Override
-	public EventListInterface[] split(NodeInterface node) {
-		EventListInterface[] res = new EventListInterface[2];
-		this.classifyLeftRightBoth(node);
-		EventListInterface[] stricts = this.strictSplit();
-		//TODO
-		return res;
-	}
-
-	@Override
 	public EventListInterface[] strictSplit() {
 		EventList leftOnly = new EventList();
 		EventList rightOnly = new EventList();
 		EventListInterface[] res = new EventListInterface[2];
 		res[0] = leftOnly;
 		res[1] = rightOnly;
-		for(Event e : this.eventList) {
+		for(EventInterface e : this.eventList) {
 			if(e.getSegment().getSide() == StrictSide.LEFTONLY)
 				leftOnly.add(e);
 			if(e.getSegment().getSide() == StrictSide.RIGHTONLY)
@@ -70,7 +61,7 @@ public class EventList implements EventListInterface {
 		int i = 0;
 		int j = 0;
 		while(i < this.size() && j < e.size()) {
-			e1 = this.eventList.get(i);
+			e1 = (Event)this.eventList.get(i);
 			e2 = (Event)e.get(j);
 			if(e1.inf(e2)) {
 				res.add(e1);
@@ -82,7 +73,7 @@ public class EventList implements EventListInterface {
 			}
 		}
 		while(i < this.size()) {
-			e1 = this.eventList.get(i);
+			e1 = (Event)this.eventList.get(i);
 			res.add(e1);
 			i++;
 		}
@@ -105,7 +96,7 @@ public class EventList implements EventListInterface {
 	  private void quicksort(int low, int high) {
 		    int i = low, j = high;
 		    // Get the pivot element from the middle of the list
-		    Event pivot = this.eventList.get(low + (high-low)/2);
+		    Event pivot = (Event)this.eventList.get(low + (high-low)/2);
 
 		    // Divide into two lists
 		    while (i <= j) {
@@ -139,38 +130,10 @@ public class EventList implements EventListInterface {
 		  }
 
 		  private void exchange(int i, int j) {
-		    Event temp = this.eventList.get(i);
+		    Event temp = (Event)this.eventList.get(i);
 		    this.eventList.set(i, this.eventList.get(j));
 		    this.eventList.set(j, temp);
 		  }
-
-	@Override
-	public void classifyLeftRightBoth(NodeInterface node) {
-		Node myNode = (Node)node;
-		for(int i = 0 ; i < myNode.size() ; i++)
-			myNode.getSegment(i).setSide(StrictSide.BOTH);
-		for(Event e : this.eventList) {
-			if(e.getType() == EventType.END &&
-					e.getPlane().getDim() == myNode.getPlane().getDim() &&
-					e.getPlane().getValue() <= myNode.getPlane().getValue())
-				e.getSegment().setSide(StrictSide.LEFTONLY);
-			else if(e.getType() == EventType.START &&
-					e.getPlane().getDim() == myNode.getPlane().getDim() &&
-					e.getPlane().getValue() >= myNode.getPlane().getValue())
-				e.getSegment().setSide(StrictSide.RIGHTONLY);
-			else if(e.getType() == EventType.PLANAR &&
-					e.getPlane().getDim() == myNode.getPlane().getDim()) {
-				if(e.getPlane().getValue() < myNode.getPlane().getValue() ||
-						(e.getPlane().getValue() == myNode.getPlane().getValue() &&
-						myNode.getPlane().getSide() == Side.LEFT))
-					e.getSegment().setSide(StrictSide.LEFTONLY);
-				if(e.getPlane().getValue() > myNode.getPlane().getValue() ||
-						(e.getPlane().getValue() == myNode.getPlane().getValue() &&
-						myNode.getPlane().getSide() == Side.RIGHT))
-					e.getSegment().setSide(StrictSide.RIGHTONLY);
-			}
-		}
-	}
 
 	@Override
 	public int size() {
@@ -178,14 +141,7 @@ public class EventList implements EventListInterface {
 	}
 
 	@Override
-	public EventListInterface[] clipSegments() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@SuppressWarnings("rawtypes")
-	@Override
-	public Collection getEventList() {
+	public List<EventInterface> getEventList() {
 		return eventList;
 	}
 

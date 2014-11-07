@@ -6,7 +6,7 @@ package interfaces;
  * @author gwlemoul
  *
  */
-public interface NodeInterface extends GeometricElement {
+public interface NodeInterface extends GeometricElement, SceneInterface {
 
 	/**
 	 * Computes the estimated cost defined by the SAH heuristic.
@@ -46,6 +46,11 @@ public interface NodeInterface extends GeometricElement {
 	 * @return The best splitting plane.
 	 */
 	PlaneInterface findPlane();
+	
+	/**
+	 * Classifies the segment in the node according to the splitting plane.
+	 */
+	void classifyLeftRightBoth();
 	
 	/**
 	 * Getter

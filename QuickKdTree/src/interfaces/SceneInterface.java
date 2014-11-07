@@ -1,5 +1,7 @@
 package interfaces;
 
+import java.util.Set;
+
 /**
  * 2D Scene
  * @author gwlemoul
@@ -14,16 +16,16 @@ public interface SceneInterface extends DelimitableInterface {
 	void addSegment(SegmentInterface segment);
 	
 	/**
-	 * Getter
-	 * @param i Index of the segment.
-	 * @return segment at index i.
-	 */
-	SegmentInterface getSegment(int i);
-	
-	/**
 	 * Size
 	 * @return size
 	 */
 	int size();
+	
+	/**
+	 * Getter
+	 * @return segment set.
+	 */
+	@SuppressWarnings("rawtypes")
+	Set getSegments();
 	
 }

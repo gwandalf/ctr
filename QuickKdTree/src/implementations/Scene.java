@@ -3,8 +3,8 @@ package implementations;
 import interfaces.SceneInterface;
 import interfaces.SegmentInterface;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * 2D Scene
@@ -13,7 +13,7 @@ import java.util.List;
  */
 public class Scene extends Delimitable implements SceneInterface {
 
-	protected List<Segment> segments;
+	protected Set<Segment> segments;
 
 	/**
 	 * Constructor
@@ -22,7 +22,7 @@ public class Scene extends Delimitable implements SceneInterface {
 	 */
 	public Scene(Point origin, Point end) {
 		super(origin, end);
-		this.segments = new ArrayList<Segment>();
+		this.segments = new HashSet<Segment>();
 	}
 
 	@Override
@@ -31,13 +31,14 @@ public class Scene extends Delimitable implements SceneInterface {
 	}
 
 	@Override
-	public SegmentInterface getSegment(int i) {
-		return this.segments.get(i);
-	}
-
-	@Override
 	public int size() {
 		return segments.size();
+	}
+	
+	@SuppressWarnings("rawtypes")
+	@Override
+	public Set getSegments() {
+		return this.segments;
 	}
 
 }
