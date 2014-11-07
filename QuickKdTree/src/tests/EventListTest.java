@@ -2,7 +2,10 @@ package tests;
 
 import implementations.Event;
 import implementations.EventList;
+import implementations.Node;
 import implementations.Plane;
+import implementations.Point;
+import implementations.QuickNode;
 import implementations.Segment;
 import interfaces.EventInterface.EventType;
 import interfaces.EventListInterface;
@@ -74,6 +77,25 @@ public class EventListTest {
 		Assert.assertEquals(e2, evs.get(1));
 		Assert.assertEquals(e3, evs.get(2));
 		Assert.assertEquals(e4, evs.get(3));
+	}
+	
+	@Test
+	public void testClassifyLeftRightBoth() {
+		Segment segLeft = new Segment();
+		Segment segRight = new Segment();
+		Segment segBoth = new Segment();
+		Plane plane = new Plane(2, 1);
+		Point min = new Point(-2, -2);
+		Point max = new Point(2, 2);
+		Node node = new QuickNode(min, max);
+		node.setPlane(plane);
+		node.addSegment(segBoth);
+		node.addSegment(segLeft);
+		node.addSegment(segRight);
+		events.classifyLeftRightBoth(node);
+		Assert.assertEquals(StrictSide.BOTH, segLeft.getSide());
+		Assert.assertEquals(StrictSide.BOTH, segBoth.getSide());
+		Assert.assertEquals(StrictSide.BOTH, segRight.getSide());
 	}
 
 }

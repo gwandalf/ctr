@@ -21,6 +21,7 @@ public class Segment extends Delimitable implements SegmentInterface {
 	
 	/**
 	 * Constructor
+	 * with (0,0) and (0,1).
 	 */
 	public Segment() {
 		super(new Point(0,0), new Point(0,1));
