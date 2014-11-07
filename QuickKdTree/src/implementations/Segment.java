@@ -19,6 +19,14 @@ public class Segment extends Delimitable implements SegmentInterface {
 	
 	/**
 	 * Constructor
+	 */
+	public Segment() {
+		super(new Point(0,0), new Point(0,1));
+		this.innerCost = 1;
+	}
+	
+	/**
+	 * Constructor
 	 * @param origin
 	 * @param end
 	 */
