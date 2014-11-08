@@ -1,6 +1,7 @@
 package implementations;
 
 import interfaces.EventInterface;
+import interfaces.PlaneInterface;
 import interfaces.EventInterface.EventType;
 import interfaces.EventListInterface;
 import interfaces.PlaneInterface.Side;
@@ -35,14 +36,16 @@ public class QuickNode extends Node {
 			p1 = new Point(this.end.getX(), this.plane.getValue());
 			p2 = new Point(this.getOrigin().getX(), this.plane.getValue());
 		}
-		if(eventsTab[0].size() <= 3)
+		if((this.end.getX() - this.origin.getX()) * (this.end.getY() - this.origin.getY()) <= 50 || eventsTab[0].size() == 0)
 			this.leftChild = new Leaf(this.origin, p1);
 		else
 			this.leftChild = new QuickNode(this.origin, p1, (EventList)eventsTab[0]);
-		if(eventsTab[1].size() <= 3)
+		if((this.end.getX() - this.origin.getX()) * (this.end.getY() - this.origin.getY()) <= 50 || eventsTab[1].size() == 0)
 			this.rightChild = new Leaf(p2, this.end);
 		else
-			this.leftChild = new QuickNode(p2, this.end, (EventList)eventsTab[1]);
+			this.rightChild = new QuickNode(p2, this.end, (EventList)eventsTab[1]);
+		this.leftChild.buildChildren();
+		this.rightChild.buildChildren();
 	}
 	
 	/**
@@ -92,7 +95,7 @@ public class QuickNode extends Node {
 		EventListInterface[] res = new EventListInterface[2];
 		res[0] = new EventList();
 		res[1] = new EventList();
-		for(Segment seg : this.segments) {
+		for(SegmentInterface seg : this.segments) {
 			if(seg.getSide() == StrictSide.BOTH) {
 				SegmentInterface[] segments = seg.split(this.plane);
 				EventList leftEvt = (EventList)segments[0].generateEvents();
@@ -100,6 +103,73 @@ public class QuickNode extends Node {
 				res[0].getEventList().addAll(leftEvt.getEventList());
 				res[1].getEventList().addAll(rightEvt.getEventList());
 			}
+		}
+		return res;
+	}
+	
+	@Override
+	public PlaneInterface findPlane() {
+		PlaneInterface res = null;
+		double cost = Double.MAX_VALUE;
+		int[] nbLeft = new int[2];
+		int[] nbPlanar = new int[2];
+		int[] nbRight = new int[2];
+		for(int i = 0 ; i < 2 ; i++) {
+			nbLeft[i] = 0;
+			nbPlanar[i] = 0;
+			nbRight[i] = this.getSegments().size();
+		}
+		int i = 0;
+		int size = this.events.size();
+		while(i < size) {
+			int nbStart = 0;
+			int nbEnd = 0;
+			int nbCop = 0;
+			Event evt = (Event)this.events.get(i);
+			Plane p = (Plane)evt.getPlane();
+			Plane current = p;
+			while(i < size &&
+					p.getDim() == current.getDim() &&
+					p.getValue() == current.getValue() &&
+					evt.getType() == EventType.END) {
+				nbEnd++;
+				i++;
+				if(i < size) {
+					evt = (Event)this.events.get(i);
+					current = (Plane)evt.getPlane();
+				}
+			}
+			while(i < size &&
+					p.getDim() == current.getDim() &&
+					p.getValue() == current.getValue() &&
+					evt.getType() == EventType.PLANAR) {
+				nbCop++;
+				i++;
+				if(i < size) {
+					evt = (Event)this.events.get(i);
+					current = (Plane)evt.getPlane();
+				}
+			}
+			while(i < size &&
+					p.getDim() == current.getDim() &&
+					p.getValue() == current.getValue() &&
+					evt.getType() == EventType.START) {
+				nbStart++;
+				i++;
+				if(i < size) {
+					evt = (Event)this.events.get(i);
+					current = (Plane)evt.getPlane();
+				}
+			}
+			nbPlanar[p.getDim()-1] = nbCop;
+			nbRight[p.getDim()-1] -= (nbCop + nbEnd);
+			double newCost = this.sah(p, nbLeft[p.getDim()-1], nbRight[p.getDim()-1]);
+			if(newCost < cost) {
+				cost = newCost;
+				res = p;
+			}
+			nbLeft[p.getDim()-1] += nbStart + nbCop;
+			nbPlanar[p.getDim()-1] = 0;
 		}
 		return res;
 	}

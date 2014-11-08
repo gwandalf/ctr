@@ -25,7 +25,6 @@ public interface SceneInterface extends DelimitableInterface {
 	 * Getter
 	 * @return segment set.
 	 */
-	@SuppressWarnings("rawtypes")
-	Set getSegments();
+	Set<SegmentInterface> getSegments();
 	
 }

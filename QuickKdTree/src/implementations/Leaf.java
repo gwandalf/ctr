@@ -1,6 +1,7 @@
 package implementations;
 
 import interfaces.LeafInterface;
+import interfaces.PlaneInterface;
 import interfaces.RayInterface;
 
 public class Leaf extends Node implements LeafInterface {
@@ -24,6 +25,12 @@ public class Leaf extends Node implements LeafInterface {
 	public void buildChildren() {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	@Override
+	public PlaneInterface findPlane() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

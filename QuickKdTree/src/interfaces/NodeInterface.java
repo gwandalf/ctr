@@ -10,10 +10,10 @@ public interface NodeInterface extends GeometricElement, SceneInterface {
 
 	/**
 	 * Computes the estimated cost defined by the SAH heuristic.
-	 * @param plan Candidate plan which may split the current node.
+	 * @param plane Candidate plan which may split the current node.
 	 * @return The estimated cost defined by the SAH heuristic.
 	 */
-	double sah(PlaneInterface plan);
+	double sah(PlaneInterface plane, int nbLeft, int nbRight);
 	
 	/**
 	 * Computes the next voxel to be crossed by the given ray.

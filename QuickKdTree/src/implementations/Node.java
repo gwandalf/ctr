@@ -6,6 +6,7 @@ import java.util.Set;
 import interfaces.LeafInterface;
 import interfaces.NodeInterface;
 import interfaces.PlaneInterface;
+import interfaces.PlaneInterface.Side;
 import interfaces.PointInterface;
 import interfaces.RayInterface;
 import interfaces.SegmentInterface;
@@ -21,6 +22,7 @@ public abstract class Node extends Scene implements NodeInterface {
 	protected Node leftChild;
 	protected Node rightChild;
 	protected Plane plane;
+	protected double sah;
 	
 	/**
 	 * Constructor
@@ -49,9 +51,21 @@ public abstract class Node extends Scene implements NodeInterface {
 	}
 
 	@Override
-	public double sah(PlaneInterface plan) {
-		// TODO Auto-generated method stub
-		return 0;
+	public double sah(PlaneInterface plane, int nbLeft, int nbRight) {
+		double leftArea;
+		double rightArea;
+		double area = (this.end.getX() - this.origin.getX()) * (this.end.getY() - this.origin.getY());
+		if(plane.getDim() == 1)
+			leftArea = (plane.getValue() - this.origin.getX()) * (this.end.getY() - this.origin.getY());
+		else
+			leftArea = (this.end.getX() - this.origin.getX()) * (plane.getValue() - this.origin.getY());
+		rightArea = area - leftArea;
+		if(leftArea < rightArea)
+			plane.setSide(Side.LEFT);
+		else	
+			plane.setSide(Side.RIGHT);
+		this.sah = this.innerCost * (nbLeft * leftArea / area + nbRight * rightArea / area + 1);
+		return this.sah;
 	}
 
 	@Override
@@ -70,12 +84,6 @@ public abstract class Node extends Scene implements NodeInterface {
 	public boolean isIn(PointInterface point) {
 		// TODO Auto-generated method stub
 		return false;
-	}
-
-	@Override
-	public PlaneInterface findPlane() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override

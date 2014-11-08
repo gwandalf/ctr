@@ -1,5 +1,7 @@
 package implementations;
 
+import interfaces.PlaneInterface;
+
 /**
  * Node built by median splitting plane
  * @author gwendal
@@ -16,6 +18,12 @@ public class NaiveNode extends Node {
 	public void buildChildren() {
 		// TODO Auto-generated method stub
 
+	}
+	
+	@Override
+	public PlaneInterface findPlane() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

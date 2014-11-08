@@ -13,7 +13,7 @@ import java.util.Set;
  */
 public class Scene extends Delimitable implements SceneInterface {
 
-	protected Set<Segment> segments;
+	protected Set<SegmentInterface> segments;
 
 	/**
 	 * Constructor
@@ -22,7 +22,7 @@ public class Scene extends Delimitable implements SceneInterface {
 	 */
 	public Scene(Point origin, Point end) {
 		super(origin, end);
-		this.segments = new HashSet<Segment>();
+		this.segments = new HashSet<SegmentInterface>();
 	}
 
 	@Override
@@ -35,9 +35,8 @@ public class Scene extends Delimitable implements SceneInterface {
 		return segments.size();
 	}
 	
-	@SuppressWarnings("rawtypes")
 	@Override
-	public Set getSegments() {
+	public Set<SegmentInterface> getSegments() {
 		return this.segments;
 	}
 

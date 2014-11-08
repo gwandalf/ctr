@@ -28,7 +28,6 @@ public class Plane implements PlaneInterface {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + dim;
-		result = prime * result + ((side == null) ? 0 : side.hashCode());
 		long temp;
 		temp = Double.doubleToLongBits(value);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
@@ -45,8 +44,6 @@ public class Plane implements PlaneInterface {
 			return false;
 		Plane other = (Plane) obj;
 		if (dim != other.dim)
-			return false;
-		if (side != other.side)
 			return false;
 		if (Double.doubleToLongBits(value) != Double
 				.doubleToLongBits(other.value))
@@ -87,4 +84,10 @@ public class Plane implements PlaneInterface {
 		this.side = side;
 	}
 
+	@Override
+	public String toString() {
+		return "Plane [dim=" + dim + ", value=" + value + ", side=" + side
+				+ "]";
+	}
+	
 }

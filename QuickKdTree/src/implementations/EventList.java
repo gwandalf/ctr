@@ -63,14 +63,14 @@ public class EventList implements EventListInterface {
 		while(i < this.size() && j < e.size()) {
 			e1 = (Event)this.eventList.get(i);
 			e2 = (Event)e.get(j);
-			if(e1.inf(e2)) {
+			if(e1.inf(e2) || e1.equals(e2)) {
 				res.add(e1);
 				i++;
 			}
 			if(e2.inf(e1)) {
 				res.add(e2);
 				j++;
-			}
+			}	
 		}
 		while(i < this.size()) {
 			e1 = (Event)this.eventList.get(i);

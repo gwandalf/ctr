@@ -44,7 +44,6 @@ public class Event implements EventInterface {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((plane == null) ? 0 : plane.hashCode());
-		result = prime * result + ((segment == null) ? 0 : segment.hashCode());
 		result = prime * result + ((type == null) ? 0 : type.hashCode());
 		return result;
 	}
@@ -62,11 +61,6 @@ public class Event implements EventInterface {
 			if (other.plane != null)
 				return false;
 		} else if (!plane.equals(other.plane))
-			return false;
-		if (segment == null) {
-			if (other.segment != null)
-				return false;
-		} else if (!segment.equals(other.segment))
 			return false;
 		if (type != other.type)
 			return false;
@@ -101,6 +95,12 @@ public class Event implements EventInterface {
 	@Override
 	public void setType(EventType type) {
 		this.type = type;
+	}
+
+	@Override
+	public String toString() {
+		return "Event [segment=" + segment + ", plane=" + plane + ", type="
+				+ type + "]";
 	}
 	
 }
