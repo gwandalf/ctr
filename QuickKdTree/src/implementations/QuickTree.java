@@ -9,6 +9,10 @@ import interfaces.SegmentInterface;
  */
 public class QuickTree extends Tree {
 
+	/**
+	 * Constructor
+	 * @param scene Scene containing the segments
+	 */
 	public QuickTree(Scene scene) {
 		EventList events = new EventList();
 		for(SegmentInterface seg : scene.getSegments()) {

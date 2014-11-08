@@ -8,6 +8,9 @@ import interfaces.RayInterface;
 import interfaces.SceneInterface;
 import interfaces.SegmentInterface;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Segment (equivalent of the 3D triangle).
  * @author gwlemoul
@@ -106,6 +109,55 @@ public class Segment extends Delimitable implements SegmentInterface {
 			res.add(ev4);
 		}
 		return res;
+	}
+	
+	@Override
+	public Set<PlaneInterface> generatePlanes() {
+		Set<PlaneInterface> res = new HashSet<PlaneInterface>();
+		Plane p1, p2, p3, p4;
+		double minX = Math.min(this.origin.getX(), this.end.getX());
+		double maxX = Math.max(this.origin.getX(), this.end.getX());
+		double minY = Math.min(this.origin.getY(), this.end.getY());
+		double maxY = Math.max(this.origin.getY(), this.end.getY());
+		p1 = new Plane(1, minX);
+		p2 = new Plane(1, maxX);
+		p3 = new Plane(2, minY);
+		p4 = new Plane(2, maxY);
+		if(this.origin.getX() == this.end.getX()) {
+			res.add(p4);
+			res.add(p1);
+			res.add(p3);
+		} else if(this.origin.getY() == this.end.getY()) {
+			res.add(p2);
+			res.add(p4);
+			res.add(p1);
+		} else {
+			res.add(p1);
+			res.add(p2);
+			res.add(p3);
+			res.add(p4);
+		}
+		return res;
+	}
+	
+	@Override
+	public double minX() {
+		return Math.min(this.origin.getX(), this.end.getX());
+	}
+
+	@Override
+	public double maxX() {
+		return Math.max(this.origin.getX(), this.end.getX());
+	}
+
+	@Override
+	public double minY() {
+		return Math.min(this.origin.getY(), this.end.getY());
+	}
+
+	@Override
+	public double maxY() {
+		return Math.max(this.origin.getY(), this.end.getY());
 	}
 	
 	@Override

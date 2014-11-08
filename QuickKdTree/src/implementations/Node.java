@@ -1,8 +1,5 @@
 package implementations;
 
-import java.util.Iterator;
-import java.util.Set;
-
 import interfaces.LeafInterface;
 import interfaces.NodeInterface;
 import interfaces.PlaneInterface;

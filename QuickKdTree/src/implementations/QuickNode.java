@@ -36,11 +36,11 @@ public class QuickNode extends Node {
 			p1 = new Point(this.end.getX(), this.plane.getValue());
 			p2 = new Point(this.getOrigin().getX(), this.plane.getValue());
 		}
-		if((this.end.getX() - this.origin.getX()) * (this.end.getY() - this.origin.getY()) <= 50 || eventsTab[0].size() == 0)
+		if((this.end.getX() - this.origin.getX()) * (this.end.getY() - this.origin.getY()) <= 50 || this.segments.size() <= 20)
 			this.leftChild = new Leaf(this.origin, p1);
 		else
 			this.leftChild = new QuickNode(this.origin, p1, (EventList)eventsTab[0]);
-		if((this.end.getX() - this.origin.getX()) * (this.end.getY() - this.origin.getY()) <= 50 || eventsTab[1].size() == 0)
+		if((this.end.getX() - this.origin.getX()) * (this.end.getY() - this.origin.getY()) <= 50 || this.segments.size() <= 20)
 			this.rightChild = new Leaf(p2, this.end);
 		else
 			this.rightChild = new QuickNode(p2, this.end, (EventList)eventsTab[1]);

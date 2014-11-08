@@ -1,11 +1,7 @@
 package implementations;
 
 import interfaces.EventInterface;
-import interfaces.EventInterface.EventType;
 import interfaces.EventListInterface;
-import interfaces.NodeInterface;
-import interfaces.PlaneInterface.Side;
-import interfaces.SegmentInterface;
 import interfaces.SegmentInterface.StrictSide;
 
 import java.util.ArrayList;
