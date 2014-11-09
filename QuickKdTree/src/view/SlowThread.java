@@ -21,11 +21,11 @@ public class SlowThread extends Thread {
 		super.run();
 		Scene scene = this.sceneViewModel.getScene();
 		SlowTree tree = new SlowTree(this.sceneViewModel.getScene());
-		double[] bounds = new double[4];
-		bounds[0] = this.sceneViewModel.getUpRectangle().getMinX();
-		bounds[3] = this.sceneViewModel.getUpRectangle().getMinY();
-		bounds[2] = this.sceneViewModel.getUpRectangle().getMaxX();
-		bounds[1] = this.sceneViewModel.getUpRectangle().getMaxY();
+		int[] bounds = new int[4];
+		bounds[0] = (int)this.sceneViewModel.getUpRectangle().getLocation().getX();
+		bounds[3] = (int)this.sceneViewModel.getUpRectangle().getLocation().getY();
+		bounds[2] = (int)this.sceneViewModel.getUpRectangle().getSize().getWidth() + bounds[0];
+		bounds[1] = (int)this.sceneViewModel.getUpRectangle().getSize().getHeight() + bounds[3];
 		NodeViewModel nvm = new NodeViewModel((Node)tree.getRoot(),
 				bounds,
 				scene.getEnd().getX(),

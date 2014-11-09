@@ -21,14 +21,15 @@ public class SceneViewModel {
 		this.upSegments = new HashSet<Line2D>();
 		this.bottomSegments = new HashSet<Line2D>();
 		this.scene = new Scene(new Point(0, 0), new Point(dimX, dimY));
-		this.upRectangle = new Rectangle((int)Transformations.xCoordinate(0, dimY),
+		this.upRectangle = new Rectangle((int)Transformations.xCoordinate(0, dimX),
 				(int)Transformations.yCoordinate(dimY, dimY),
 				(int)Transformations.xDimension(dimX, dimX),
-				(int)Transformations.yDimension(dimX, dimX));
-		this.bottomRectangle = new Rectangle((int)Transformations.xCoordinate(0, dimY),
+				(int)Transformations.yDimension(dimY, dimY));
+		this.bottomRectangle = new Rectangle((int)Transformations.xCoordinate(0, dimX),
 				(int)Transformations.yCoordinate(dimY, dimY) + Transformations.OFFSET,
 				(int)Transformations.xDimension(dimX, dimX),
-				(int)Transformations.yDimension(dimX, dimX));
+				(int)Transformations.yDimension(dimY, dimY));
+		System.out.println("Rectangle = " + bottomRectangle.getLocation().getX() + ',' + bottomRectangle.getLocation().getY() + ',' + bottomRectangle.getSize().getWidth() + ',' + bottomRectangle.getSize().getHeight());
 		for(int i = 0 ; i < nbSegments ; i++) {
 			double x1 = 0, x2 = 0, y1 = 0, y2 = 0;
 			while(x1 == x2 && y1 == y2) {

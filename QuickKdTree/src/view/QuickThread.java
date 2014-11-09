@@ -22,11 +22,12 @@ public class QuickThread extends Thread {
 		super.run();
 		Scene scene = this.sceneViewModel.getScene();
 		QuickTree tree = new QuickTree(this.sceneViewModel.getScene());
-		double[] bounds = new double[4];
-		bounds[0] = this.sceneViewModel.getBottomRectangle().getMinX();
-		bounds[3] = this.sceneViewModel.getBottomRectangle().getMinY();
-		bounds[2] = this.sceneViewModel.getBottomRectangle().getMaxX();
-		bounds[1] = this.sceneViewModel.getBottomRectangle().getMaxY();
+		int[] bounds = new int[4];
+		bounds[0] = (int)this.sceneViewModel.getBottomRectangle().getLocation().getX();
+		bounds[3] = (int)this.sceneViewModel.getBottomRectangle().getLocation().getY();
+		bounds[2] = (int)this.sceneViewModel.getBottomRectangle().getSize().getWidth() + bounds[0];
+		bounds[1] = (int)this.sceneViewModel.getBottomRectangle().getSize().getHeight() + bounds[3];
+		System.out.println("Bounds = " + bounds[0] + ',' + bounds[1] + ',' + bounds[2] + ',' + bounds[3]);
 		NodeViewModel nvm = new NodeViewModel((Node)tree.getRoot(),
 				bounds,
 				scene.getEnd().getX(),
