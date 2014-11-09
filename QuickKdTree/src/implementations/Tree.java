@@ -13,6 +13,11 @@ public abstract class Tree implements TreeInterface {
 	protected Node root;
 	
 	@Override
+	public void build() {
+		this.root.buildChildren();
+	}
+	
+	@Override
 	public NodeInterface getRoot() {
 		return this.root;
 	}

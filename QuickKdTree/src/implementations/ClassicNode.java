@@ -14,7 +14,7 @@ public abstract class ClassicNode extends Node {
 
 	@Override
 	public void buildChildren() {
-		this.plane = (Plane)this.findPlane();
+		this.setPlane((Plane)this.findPlane());
 		List<Set<SegmentInterface>> segmentsTab = this.split();
 		Point p1, p2;
 		if(this.plane.getDim() == 1) {
@@ -25,13 +25,13 @@ public abstract class ClassicNode extends Node {
 			p2 = new Point(this.getOrigin().getX(), this.plane.getValue());
 		}
 		if((this.end.getX() - this.origin.getX()) * (this.end.getY() - this.origin.getY()) <= 50 || this.segments.size() <= 20)
-			this.leftChild = new Leaf(this.origin, p1);
+			this.setLeftChild(new Leaf(this.origin, p1));
 		else
-			this.leftChild = this.makeClassicNode(this.origin, p1, segmentsTab.get(0));
+			this.setLeftChild(this.makeClassicNode(this.origin, p1, segmentsTab.get(0)));
 		if((this.end.getX() - this.origin.getX()) * (this.end.getY() - this.origin.getY()) <= 50 || this.segments.size() <= 20)
-			this.rightChild = new Leaf(p2, this.end);
+			this.setRightChild(new Leaf(p2, this.end));
 		else
-			this.rightChild = this.makeClassicNode(p2, this.end, segmentsTab.get(1));
+			this.setRightChild(this.makeClassicNode(p2, this.end, segmentsTab.get(1)));
 		this.leftChild.buildChildren();
 		this.rightChild.buildChildren();
 	}

@@ -8,6 +8,11 @@ package interfaces;
 public interface TreeInterface {
 
 	/**
+	 * Launches the actual tree building.
+	 */
+	void build();
+	
+	/**
 	 * Getter
 	 * @return root
 	 */

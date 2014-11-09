@@ -41,31 +41,37 @@ public class TreesTests {
 	@Test
 	public void testSlowTreeS1() {
 		SlowTree tree = new SlowTree(s1);
+		tree.build();
 	}
 	
 	@Test
 	public void testQuickTreeS1() {
 		QuickTree tree = new QuickTree(s1);
+		tree.build();
 	}
 	
 	@Test
 	public void testSlowTreeS2() {
 		SlowTree tree = new SlowTree(s2);
+		tree.build();
 	}
 	
 	@Test
 	public void testQuickTreeS2() {
 		QuickTree tree = new QuickTree(s2);
+		tree.build();
 	}
 
 	@Test
 	public void testSlowTreeS3() {
 		SlowTree tree = new SlowTree(s3);
+		tree.build();
 	}
 	
 	@Test
 	public void testQuickTreeS3() {
 		QuickTree tree = new QuickTree(s3);
+		tree.build();
 	}
 	
 }

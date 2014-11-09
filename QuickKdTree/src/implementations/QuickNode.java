@@ -26,7 +26,7 @@ public class QuickNode extends Node {
 
 	@Override
 	public void buildChildren() {
-		this.plane = (Plane)this.findPlane();
+		setPlane((Plane)this.findPlane());
 		EventListInterface[] eventsTab = this.split();
 		Point p1, p2;
 		if(this.plane.getDim() == 1) {
@@ -37,13 +37,13 @@ public class QuickNode extends Node {
 			p2 = new Point(this.getOrigin().getX(), this.plane.getValue());
 		}
 		if((this.end.getX() - this.origin.getX()) * (this.end.getY() - this.origin.getY()) <= 50 || this.segments.size() <= 20)
-			this.leftChild = new Leaf(this.origin, p1);
+			this.setLeftChild(new Leaf(this.origin, p1));
 		else
-			this.leftChild = new QuickNode(this.origin, p1, (EventList)eventsTab[0]);
+			this.setLeftChild(new QuickNode(this.origin, p1, (EventList)eventsTab[0]));
 		if((this.end.getX() - this.origin.getX()) * (this.end.getY() - this.origin.getY()) <= 50 || this.segments.size() <= 20)
-			this.rightChild = new Leaf(p2, this.end);
+			this.setRightChild(new Leaf(p2, this.end));
 		else
-			this.rightChild = new QuickNode(p2, this.end, (EventList)eventsTab[1]);
+			this.setRightChild(new QuickNode(p2, this.end, (EventList)eventsTab[1]));
 		this.leftChild.buildChildren();
 		this.rightChild.buildChildren();
 	}

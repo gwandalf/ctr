@@ -15,7 +15,13 @@ public class Main {
 		JFrame frame = new JFrame("Application");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.add(panel);
+		frame.pack();
+		frame.setSize(500, 300);
 		frame.setVisible(true);
+		QuickThread quick = new QuickThread(sceneVM, panel);
+		SlowThread slow = new SlowThread(sceneVM, panel);
+		quick.start();
+		slow.start();
 	}
 
 }

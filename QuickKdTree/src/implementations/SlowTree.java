@@ -10,7 +10,6 @@ public class SlowTree extends Tree {
 
 	public SlowTree(Scene scene) {
 		this.root = new SlowNode(scene.origin, scene.end, scene.getSegments());
-		this.root.buildChildren();
 	}
 	
 }

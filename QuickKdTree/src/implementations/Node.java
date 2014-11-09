@@ -97,6 +97,8 @@ public abstract class Node extends Scene implements NodeInterface {
 	@Override
 	public void setLeftChild(NodeInterface leftChild) {
 		this.leftChild = (Node) leftChild;
+		this.setChanged();
+		this.notifyObservers("leftNode");
 	}
 
 	@Override
@@ -107,6 +109,8 @@ public abstract class Node extends Scene implements NodeInterface {
 	@Override
 	public void setRightChild(NodeInterface rightChild) {
 		this.rightChild = (Node) rightChild;
+		this.setChanged();
+		this.notifyObservers("rightNode");
 	}
 	
 	@Override
@@ -117,6 +121,8 @@ public abstract class Node extends Scene implements NodeInterface {
 	@Override
 	public void setPlane(PlaneInterface plane) {
 		this.plane = (Plane)plane;
+		this.setChanged();
+		this.notifyObservers("plane");
 	}
 
 }

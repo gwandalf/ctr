@@ -27,6 +27,7 @@ public class QuickTreeTest {
 	@Test
 	public void testConstructor() {
 		QuickTree tree = new QuickTree(SceneTest.scene);
+		tree.build();
 	}
 
 }

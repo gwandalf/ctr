@@ -3,12 +3,14 @@ package implementations;
 import interfaces.DelimitableInterface;
 import interfaces.PointInterface;
 
+import java.util.Observable;
+
 /**
  * Represents an object which can be defined by two points.
  * @author gwlemoul
  *
  */
-public abstract class Delimitable implements DelimitableInterface {
+public abstract class Delimitable extends Observable implements DelimitableInterface {
 
 	protected Point origin;
 	protected Point end;

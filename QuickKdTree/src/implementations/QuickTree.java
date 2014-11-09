@@ -21,7 +21,6 @@ public class QuickTree extends Tree {
 		}
 		events.sort();
 		this.root = new QuickNode(scene.origin, scene.end, events);
-		this.root.buildChildren();
 	}
 	
 }
