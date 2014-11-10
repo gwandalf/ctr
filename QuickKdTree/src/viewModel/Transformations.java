@@ -3,8 +3,8 @@ package viewModel;
 public class Transformations {
 
 	public static final double XORIGIN = 20;
-	public static final double XEND = 200;
-	public static final double YORIGIN = 180;
+	public static final double XEND = 900;
+	public static final double YORIGIN = 250;
 	public static final double YEND = 20;
 	public static final int OFFSET = 300;
 	

@@ -1,0 +1,125 @@
+\documentclass[a4paper]{article}
+
+\usepackage[french]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage[colorinlistoftodos]{todonotes}
+
+\title{Rapport CTR : Kd-Trees}
+
+\author{Gwendal Le Moulec}
+
+\date{\today}
+
+\begin{document}
+
+\section{Parallélisation de la construction sur GPU}
+
+\textit{Cette sous-partie traite exclusivement de l'article} Real-Time KD-Tree Construction on Graphics Hardware\textit{, de Kun Zhou, Qiming Hou, Rui Wang et Baining Guo.}
+
+Le but de cet article est de présenter un algorithme rapide de construction des kd-trees sur GPU (Graphics Processing Unit)\footnote{Pour rappel, les GPUs jouent le rôle de CPUs simplifiées et utilisées en parallèle avec un très grand nombre d'autres GPUs (plusieurs milliers).}. Tout d'abord, l'état de l'art de la construction des kd-trees est rappelé, puis la solution est proposée et expliquée en détails. Enfin, une évaluation de l'algorithme est réalisée par tests sur trois cas d'utilisation~: le tracé de rayons, le placage de photons\footnote{Technique permettant de simuler l'illumination dans une scène graphique.} (\textit{Photon Mapping} en anglais) et la recherche des plus proches voisins dans un nuage de points.
+
+\subsection{Etat de l'art}
+Il est d'abord rappelé que les optimisations de kd-trees ont jusque là été menées dans le but d'améliorer le parcours de l'arbre, en proposant des partitions pertinentes. Cependant, une telle approche rend la construction des kd-trees longue, car il faut évaluer une fonction de coût\footnote{Coût du parcours en fonction de la position du plan.} dont on veut déterminer le minimum. Les auteurs mentionnent certaines améliorations proposées afin d'améliorer le temps de construction tout en conservant un parcours de bonne qualité. Ainsi, l'algorithme présenté dans le premier article \textit{On building fast kd-trees for Ray Tracing, and on doing that in O(N log N)} est cité, mais déploré trop long pour les scènes très animées.
+
+Certaines méthodes exploitant le parallélisme sur CPU ont été étudiées. Bien que largement moins parallélisables qu'avec des GPUs, ces algorithmes sont plus performants pour les scènes dynamiques que les algorithmes sur GPU proposés jusqu'à maintenant. Le défi des auteurs est donc de proposer un algorithme de construction de kd-trees sur GPU adapté aux scènes dynamiques et plus performant que les algorithmes CPU actuels.
+
+\subsection{Vue d'ensemble de l'algorithme}
+
+La clé de l'algorithme est d'optimiser la parallélisation en considérant deux étapes~:
+\begin{enumerate}
+	\item Construction des "grands" nœuds (ceux qui contiennent beaucoup de feuilles), proches de la racine de l'arbre~: la parallélisation se fait sur les triangles.
+	\item Construction des "petits" nœuds, proches des feuilles~: la parallélisation se fait sur les nœuds.
+\end{enumerate}
+Plus précisément, au début de la construction chaque processus est chargé de classer un certain nombre de triangles d'un côté ou de l'autre d'un plan de partitionnement. Le nombre de triangles est grand et le nombre de nœuds est petit, un plus grand nombre de processus s’exécuteront alors en parallèle. A l'inverse, à la fin de la construction le nombre de nœuds est grand et le nombre de triangles par nœud est petit, ce qui explique l'inversion du choix. Cette fois, c'est la construction de chaque sous-arbre qui s'effectuera en parallèle.
+
+L'optimisation de la parallélisation n'est pas la seule différence entre les deux étapes. En effet, l'autre clé de l'algorithme est de calculer rapidement la fonction de coût. L'heuristique utilisée est SAH, comme pour le premier article. La fonction de coût est donc la même~:
+\\\\
+$SAH(x) = C_{ts} + \frac{C_L(x)A_L(x)}{A} + \frac{C_R(x)A_R(x)}{A}$,
+\\\\
+où $C_{ts}$ est le coût de traversée du nœud courant, $C_L(x)$ (resp. $C_R(x)$) est le coût de traversée du nœud gauche (resp. droit) pour le plan de séparation en position $x$, $A$ est l'aire de la surface courante, $A_L(x)$ (resp. $A_R(x)$) est l'aire de la surface du nœud gauche (resp. droit).
+\\\\
+Le calcul de cette fonction est impossible pour le problème de construction de l'arbre car pour calculer le coût au nœud courant, il faut connaître le coût des nœuds fils. La fonction doit donc être estimée. L'approche utilisée ici consiste à calculer $C_L(x)$ et $C_R(x)$ comme si les fils du nœud courant étaient des feuilles.
+
+Cette approximation marche bien pour les nœuds proches des feuilles, c'est à dire pour la deuxième étape de l'algorithme. En revanche, elle n'est pas satisfaisante près de la racine. C'est pourquoi pour la première étape certaines coupures se feront par le pan médian perpendiculaire à l'axe le plus long, ce qui constitue une technique peu coûteuse mais aussi peu efficace pour le parcours de l'arbre. Ceci est valable pour les aires homogènes en terme de densité. Pour les autres, c'est à dire celles dont on peut trouver une partition vide occupant au moins un quart de l'espace, c'est le plan correspondant qui est choisi. La figure \ref{fig:partition}, tirée de l'article, résume cette explication~:
+
+\begin{figure}[!h]
+\centering
+\includegraphics[width=0.75\textwidth]{res/partitioning.png}
+\caption{\label{fig:partition}Deux cas de partitionnement des grands nœuds~: (a) coupure d'espace vide, (b) plan médian.}
+\end{figure}
+
+%TODO insérer démonstration : complexité = O(NlogN)
+
+\subsection{Expérimentations}
+Les performances de l'algorithme ont été comparées avec celles de l'algorithme présenté dans le premier article. Il en résulte que l'algorithme sur GPU est 7 fois plus rapide pour une petite scène (\textit{Toys}, 11 000 triangles) et 16 fois plus rapide pour une grande scène (\textit{Fairy Forest}, 178 000 triangles). Les temps de parcours sont comparables pour les deux algorithmes. En revanche, pour les grandes scènes, le coût de traversée d'un arbre construit sur GPU est plus élevé que pour un arbre construit sur CPU. Cela met en lumière le fait que l'utilisation du plan médian pour les grands nœuds n'est pas nécessairement une bonne solution (appliquée à tout l'arbre, elle génère des parcours peu efficaces). Peut-être faudrait-il tester l'application de la méthode d'estimation de la fonction de coût à tout l'arbre et comparer les résultats obtenus avec la méthode "hybride" pour se faire une idée. D'autre part, une étape pourrait être ajouter à l'algorithme pour pallier à ce problème~: une estimation préliminaire du nombre de triangles dans la scène permettrait de choisir une approche ou une autre.
+
+
+\section{Some \LaTeX{} Examples}
+\label{sec:examples}
+
+\subsection{How to Leave Comments}
+
+Comments can be added to the margins of the document using the \todo{Here's a comment in the margin!} todo command, as shown in the example on the right. You can also add inline comments:
+
+\todo[inline, color=green!40]{This is an inline comment.}
+
+\subsection{How to Include Figures}
+
+First you have to upload the image file (JPEG, PNG or PDF) from your computer to writeLaTeX using the upload link the project menu. Then use the includegraphics command to include it in your document. Use the figure environment and the caption command to add a number and a caption to your figure. See the code for Figure \ref{fig:frog} in this section for an example.
+
+%\begin{figure}
+%\centering
+%\includegraphics[width=0.3\textwidth]{frog.jpg}
+%\caption{\label{fig:frog}This frog was uploaded to writeLaTeX via the project menu.}
+%\end{figure}
+
+\subsection{How to Make Tables}
+
+Use the table and tabular commands for basic tables --- see Table~\ref{tab:widgets}, for example.
+
+\begin{table}
+\centering
+\begin{tabular}{l|r}
+Item & Quantity \\\hline
+Widgets & 42 \\
+Gadgets & 13
+\end{tabular}
+\caption{\label{tab:widgets}An example table.}
+\end{table}
+
+\subsection{How to Write Mathematics}
+
+\LaTeX{} is great at typesetting mathematics. Let $X_1, X_2, \ldots, X_n$ be a sequence of independent and identically distributed random variables with $\text{E}[X_i] = \mu$ and $\text{Var}[X_i] = \sigma^2 < \infty$, and let
+$$S_n = \frac{X_1 + X_2 + \cdots + X_n}{n}
+      = \frac{1}{n}\sum_{i}^{n} X_i$$
+denote their mean. Then as $n$ approaches infinity, the random variables $\sqrt{n}(S_n - \mu)$ converge in distribution to a normal $\mathcal{N}(0, \sigma^2)$.
+
+\subsection{How to Make Sections and Subsections}
+
+Use section and subsection commands to organize your document. \LaTeX{} handles all the formatting and numbering automatically. Use ref and label commands for cross-references.
+
+\subsection{How to Make Lists}
+
+You can make lists with automatic numbering \dots
+
+\begin{enumerate}
+\item Like this,
+\item and like this.
+\end{enumerate}
+\dots or bullet points \dots
+\begin{itemize}
+\item Like this,
+\item and like this.
+\end{itemize}
+\dots or with words and descriptions \dots
+\begin{description}
+\item[Word] Definition
+\item[Concept] Explanation
+\item[Idea] Text
+\end{description}
+
+We hope you find write\LaTeX\ useful, and please let us know if you have any feedback using the help menu above.
+
+\end{document}
