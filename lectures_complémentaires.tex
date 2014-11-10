@@ -26,11 +26,14 @@ L'algorithme de construction d'arbre kd sur GPU a le mérite d'être une méthod
 
 \section{Ouverture}
 Comme cela est rappelé par Zhou et al., les kd-trees ne sont pas seulement utilisés pour le tracé de rayons. La recherche des plus proches voisins se sert également de cette structure. Il faut néanmoins adapter l'arbre  car les besoins ne sont pas les mêmes \cite{buffered-kdtree}. Comme ceci est expliqué par Zhou et al., les composants de la scène ne sont plus des triangles mais des points, ce qui simplifie certaines étapes de l'algorithme (ex~: plus besoin de cacluler les AABBs). L'heuristique proposée n'est plus SAH, mais VVH, qui prend en compte le volume d'un nœud.
+\\\\
+Il existe d'autres moyens qui permettent d'accélérer la recherche de plus proches voisins ou le lancé de rayons, comme les BVH (Bounding Volume Hierarchies). L'optimisation de leur construction sur GPU est aussi sujette aux recherches \cite{bvh}. Ces structures ont l'avantage de simplifier la répartition des triangles qui ne sont classés que dans un nœud (et non deux à la fois pour les triangles chevauchant le plan de séparation). Cela diminue la taille des structures de données et la mémoire requise pour la construction de l'arbre/BVH. Les auteurs de \cite{bvh} estiment ainsi avoir besoin de jusqu'à dix fois moins de mémoire (section 5) pour 1 million de triangles, soit 100MB. Néanmoins, l'étape cruciale de recherche des meilleurs candidats est plus complexe pour les BVH qui cherchent des volumes d'encadrement pour chacun d'entre eux, alors que les arbres kd n'utilisent que le volume encadrant le nœud à diviser et les plans candidats.
 
 \begin{thebibliography}{1}
 	\bibitem{anti-sah} LIANG, Xiao, YANG, Hongyu, QIAN, Yinling, et al. A Fast Kd-tree Construction for Ray Tracing based on Efficient Ray Distribution. Journal of Software, 2014, vol. 9, no 3, p. 596-604.
 	\bibitem{parallel-cpu} SHEVTSOV, Maxim, SOUPIKOV, Alexei, et KAPUSTIN, Alexander. Highly Parallel Fast KD-tree Construction for Interactive Ray Tracing of Dynamic Scenes. In : Computer Graphics Forum. Blackwell Publishing Ltd, 2007. p. 395-404.
 	\bibitem{buffered-kdtree} GIESEKE, Fabian, HEINERMANN, Justin, OANCEA, Cosmin, et al. Buffer kd trees: processing massive nearest neighbor queries on GPUs. In : Proceedings of The 31st International Conference on Machine Learning. 2014. p. 172-180.
+	\bibitem{bvh} LAUTERBACH, Christian, GARLAND, Michael, SENGUPTA, Shubhabrata, et al. Fast BVH construction on GPUs. In : Computer Graphics Forum. Blackwell Publishing Ltd, 2009. p. 375-384.
 \end{thebibliography}
 
 \section{Some \LaTeX{} Examples}
