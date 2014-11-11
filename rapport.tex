@@ -5,6 +5,7 @@
 \usepackage{amsmath}
 \usepackage{graphicx}
 \usepackage[colorinlistoftodos]{todonotes}
+\usepackage[french]{algorithm2e}
 
 \title{Rapport CTR : Kd-Trees}
 
@@ -33,17 +34,171 @@ Cette méthode est bien plus efficace qu'un parcours de la liste des triangles p
 
 \textit{Cette sous-partie traite exclusivement de l'article} On building fast kd-Trees for Ray Tracing, and on doing that in O(N log N)\textit{, de Ingo Wald et Vlastimil Havran.}
 
-L'article présente un algorithme permettant de construire des kd-Trees efficaces avec une complexité de $O(N.log(N))$. Les auteurs partent du constat qu'on cherche en général à construires des kd-Trees efficaces pour la recherche dans un espace à $k$ dimensions, sans prendre en compte le temps de construction du kd-Tree. Il est vrai que ceci n'est pas un gros problème pour des petits espaces. Cependant, les espaces deviennent de plus en plus grands et de plus en plus denses, ce qui met eu premier plan la nécessité de disposer d'algorithmes rapides. Or, la plupart des algorithmes utilisés aujourd'hui ont une complexité de $O(Nlog²N)$ ou même de $O(N²)$. Il est dit que la limite inférieure théoriquement atteignable est $O(N.log(N))$.
+L'article présente un algorithme permettant de construire des kd-Trees efficaces avec une complexité de $O(N.log(N))$. Les auteurs partent du constat qu'on cherche en général à construires des kd-Trees efficaces pour la recherche dans un espace à $k$ dimensions, sans prendre en compte le temps de construction du kd-Tree. Il est vrai que ceci n'est pas un gros problème pour des petits espaces. Cependant, les espaces deviennent de plus en plus grands et de plus en plus denses, ce qui met eu premier plan la nécessité de disposer d'algorithmes rapides. Or, la plupart des algorithmes utilisés aujourd'hui ont une complexité de $O(Nlog^2N)$ ou même de $O(N^2)$. Il est dit que la limite inférieure théoriquement atteignable est $O(N.log(N))$.
 
-La proposition d'algorithme est tirée d'un algorithme en $O(N.log²(N))$ ré-adapté. Comme pour tous les algorithmes, de construction de kd-Trees, ce qui est déterminant est la recherche du plan séparateur en chaque noeud. Pour ce faire, il faut trouver un plan aligné sur un des axes de la base du repère qui minimise le côut estimé de traversée des deux voxels. L'approche utilisée pour clculer ce coût est l'heuristique SAH\footnote{Surface Area Heuristique}. Le coût calculé alrs calculé est~:
+La proposition d'algorithme est tirée d'un algorithme en $O(N.log^2(N))$ ré-adapté. Comme pour tous les algorithmes, de construction de kd-trees, ce qui est déterminant est la recherche du plan séparateur en chaque noeud. Pour ce faire, il faut trouver un plan aligné sur un des axes de la base du repère qui minimise le côut estimé de traversée des deux voxels. L'approche utilisée pour calculer ce coût est l'heuristique SAH\footnote{Surface Area Heuristique}. Le coût alors calculé est~:
 
 %TODO formule du coût.
 
-Des considérations heuristiques permettent de définir un ensemble de plans candidats, à partir desquels sera choisi le plan minimisant le coût. Le principe de l'algorithme initial étudié est le suivant~: pour chaque dimension
+On doit considérer que pour un voxel de dimensions données et non coupé, son côut de traversée dépend uniquement du nombre de triangles qu'il contient.
+Des considérations heuristiques permettent de définir un ensemble de plans candidats, à partir desquels sera choisi le plan minimisant le coût. L'idée de base pour trouver les candidats est de ne sélectionner que les plans qui délimitent les AABB\footnote{Axis Aligned Bounding Box} des triangles, car ce sont les endroits où le nombre de triangles change d'un c\^oté et de l'autre du plan, ce qui provoque des sauts dans la fonction de co\^ut. Les minimums sont donc à chercher à ces positions.
+
+Puisque l'on veut connaître la complexité de nos algorithmes, commençons par identifier les grandes étapes d'un algorithme de construction d'un kd-tree. En pseudo-code, les fonctions de construction classiques dont on veut connaître la complexité suivent cet algorithme~:
+\begin{function}
+\SetKwProg{function}{Function}{}{}
+\function{Arbre(Triangles T, Voxel V)}{
+	\If{cas d'arrêt}{
+		\Return{Feuille(T)}
+	}
+	Plan p = TrouverPlan(T, V)\;
+	Calcul de $T_g$, $T_d$, $V_g$ et $V_d$ en fonction de p\;
+	\Return{Nœud(p, Arbre($T_g$, $V_g$), Arbre($T_d$, $V_d$))}
+}
+\end{function}
+
+Ceci nous amène à la formule de complexité suivante~:
+
+$T(N) = T_{TrouverPlan}(N) + 2T(\frac{N}{2})$
+\\\\
+où $N$ est le nombre de triangles. Le point déterminant sur lequel nous pouvons jouer est donc la fonction $TrouverPlan$. Conformément à ce qui est dit plus haut, nous devons trouver les plans candidats et calculer pour chacun d'entre eux le coût de traversée du voxel coupé. Le plan qui donne le coût minimal sera choisi. L'approche naïve donnerait l'algorithme suivant~:
+
+\begin{algorithm}
+\SetKwProg{function}{Function}{}{}
+\function{TrouverPlan(Triangles T, Voxel V)}{
+	entier min = $\infty$\;
+	Plan $p_{res}$\;
+	\ForAll{triangle t de T}{
+		P = 6 faces de l'AABB\;
+		\ForAll{plan p de P}{
+			$N_g$ = NbTrianglesAGauche(T, p)\;
+			$N_d$ = NbTrianglesADroite(T, p)\;
+			$N_p$ = NbTrianglesCoplanaires(T, p)\;
+			coût = $SAH(V, p, N_g, N_d)$\;
+			\If{coût$ \leq min$}{
+				min = coût\;
+				$p_{res}$ = p\;
+			}
+		}
+	}
+	\Return{$p_{res}$ }
+}
+\end{algorithm}
+
+Il est évident que la complexité des fonctions de comptage est de $O(N)$. La complexité totale de cette implémentation naïve de $TrouverPlan$ est donc de $O(N^2)$. Nous devrions réduire cette complexité. Les auteurs de l'article ont remarqué que le meilleur plan peut être trouvé en un temps linéaire. Le principe de base est le suivant~: pour une même dimension $x$, si on trie les plans selon leur position de gauche à droite, il devient facile de compter le nombre de triangles de chaque côté d'un plan récursivement~:
+\begin{enumerate}
+	\item $N_g^{(i)}$~: il ne peut qu'augmenter. Pour un plan $plan_i$, $N_g^{(i)}$ = $N_g^{(i-1)} + N_p^{(i-1)} + $ nombre de triangles "commençant" au plan $plan^{(i-1)}$
+	\item $N_d^{(i)}$~: il ne peut que diminuer. Pour un plan $plan_i$, $N_d^{(i)}$ = $N_d^{(i-1)} - N_p^{(i)} - $ nombre de triangles "se terminant" au plan $plan_i$ 
+	\item Pour tout $i$, $N_p^(i)$ doit \^etre calculé préalablement.
+\end{enumerate}
+
+En pratique, il n'est pas possible d'implémenter ces suites avec des simples tableaux. Les auteurs de l'article proposent de définir une nouvelle structure de données, l'événement, qui contient les trois champs suivants~:
+\begin{enumerate}
+	\item Triangle associé t
+	\item Position du plan associé $\epsilon$
+	\item Type $type$~: indique si t "commence", "se termine" ou est coplanaire au plan $\epsilon$. Ces types seront respectivement codés +, - et |.
+\end{enumerate}
+
+Pour une dimension $k$ donnée, on construira une liste $E$ d'événements de la manière suivante~: Pour chaque triangle $t$, on générera tous les événements associant ce triangle à un plan candidat "en contact" et on précisera la nature de ce contact (+, - ou |). Cette construction a une complexité temporelle de $O(N)$. Par soucis de concision, nous ne donnerons pas les détails du calcul ici. La liste $E$ devra ensuite être triée, ce qui donne une complexité de $O(NlogN)$ avec un tri rapide. Le critère de tri est le suivant~: soient deux événements $e_1$ = ($t_1$, $\epsilon_1$, $type_1$) et $e_2$ = ($t_2$, $\epsilon_2$, $type_2$). Si $\epsilon_1 \inf \epsilon_2$, alors $e_1 \inf e_2$. En cas d'égalité, on utilise un ordre arbitraire sur +, - et |. Les auteurs de l'article proposent - $\inf$ | $\inf$ +.
+
+On remarque alors que tous les événements de même plan sont contigüs. On pourra alors virtuellement subdiviser la liste en groupes, chacun étiqueté par un plan.
+
+Ceci nous permet de réécrire la fonction $TrouverPlan$~:
+\\\\
+$$function TrouverPlan(Triangles T, Voxel V)
+	entier min = MAX_INT
+	Plan p_{res}
+	Pour k = 1, 2, 3~:
+		E = InitListeEvenements(k, T, V)
+		trier(E)
+		N_g = 0, N_p = 0, N_d = taille(T)
+		Pour tous les groupes g_{\epsilon} de E, pris dans l'ordre~:
+			nb_-, nb_|, nb_+ = compterTypes(g_{\epsilon})
+			%TODO : copié coller de l'article
+	retourne p_{res}$$
+\\\\
+
+\subsubsection{A rédiger correctement...}
+L'optimisation permettant d'atteindre O(NlogN) ne nécessite pas grand chose. En fait, il suffit de se rendre compte que sortie le tri des appels récursifs (la faire avant la construction de l'arbre), nous permet d'améliorer la complexité (Note pour moi même : ne pas en dire plus que cela. L'idée c'est de juste mettre ne évidence le fait que cette petite astuce suffit).
+
+Pour les tests on peut simplement commenter un peu et formuler les critiques suivantes :
+(-) pas de comparaison avec d'autres approches (vérifier les dates et l'état de l'art)
+(-) beaucoup de colonnes ne sont pas très intéressantes ($N_l$, $N_r$ etc...)
+(-) pas de scènes dynamiques
+
+sur l'article :
+(+) démonstration très complète et rigoureuse.
+(~) pas d'utilisation du parallélisme (ce serait encore mieux)
+
+autres remarques, en vrac :
+Première impression est très positive : la démarche est très rigoureuse et du recul est pris par rapport aux (bons) résultats (expliquer). Le fait que l'algorithme ait prouvé sa valeur dans l'industrie est un argument solide en sa faveur. Dommage quand même que les résultats de performances des traversées des kd-trees ne soient pas présentés (c'est vrai que ce n'est pas le sujet de l'article mais c'est l'essentiel pour les kd-trees).
+	Pas de comparaison en terme place de mémoire prise par les structures de données. Il serait intéressant d'avoir cette information (faire l'expérience pour connaitre cela et donner les conclusions).
+	Part du principe que SAH est la meilleure approche. Existe-t-il d'autres approches reconnues plus rapides (mais certainement pas de meilleure complexité) ?
+	La limite théorique de O(NlogN) n'est pas claire : il est dit que cela est dû au tri mais qui a dit que pour être "intelligent", il fallait absolument implémenter un tri ?
+	
+%TODO faire des recherches pour appuyer / infirmer ces critiques, tirer des critiques de la mise en oeuvre pratique
 
 \subsection{Parallélisation de la construction sur GPU}
 
 \textit{Cette sous-partie traite exclusivement de l'article} Real-Time KD-Tree Construction on Graphics Hardware\textit{, de Kun Zhou, Qiming Hou, Rui Wang et Baining Guo.}
+
+Le but de cet article est de présenter un algorithme rapide de construction des kd-trees sur GPU (Graphics Processing Unit)\footnote{Pour rappel, les GPUs jouent le rôle de CPUs simplifiées et utilisées en parallèle avec un très grand nombre d'autres GPUs (plusieurs milliers).}. Tout d'abord, l'état de l'art de la construction des kd-trees est rappelé, puis la solution est proposée et expliquée en détails. Enfin, une évaluation de l'algorithme est réalisée par tests sur trois cas d'utilisation~: le tracé de rayons, le placage de photons\footnote{Technique permettant de simuler l'illumination dans une scène graphique.} (\textit{Photon Mapping} en anglais) et la recherche des plus proches voisins dans un nuage de points.
+
+\subsubsection{Etat de l'art}
+Il est d'abord rappelé que les optimisations de kd-trees ont jusque là été menées dans le but d'améliorer le parcours de l'arbre, en proposant des partitions pertinentes. Cependant, une telle approche rend la construction des kd-trees longue, car il faut évaluer une fonction de coût\footnote{Coût du parcours en fonction de la position du plan.} dont on veut déterminer le minimum. Les auteurs mentionnent certaines améliorations proposées afin d'améliorer le temps de construction tout en conservant un parcours de bonne qualité. Ainsi, l'algorithme présenté dans le premier article \textit{On building fast kd-trees for Ray Tracing, and on doing that in O(N log N)} est cité, mais déploré trop long pour les scènes très animées.
+
+Certaines méthodes exploitant le parallélisme sur CPU ont été étudiées. Bien que largement moins parallélisables qu'avec des GPUs, ces algorithmes sont plus performants pour les scènes dynamiques que les algorithmes sur GPU proposés jusqu'à maintenant. Le défi des auteurs est donc de proposer un algorithme de construction de kd-trees sur GPU adapté aux scènes dynamiques et plus performant que les algorithmes CPU actuels.
+
+\subsubsection{Vue d'ensemble de l'algorithme}
+
+La clé de l'algorithme est d'optimiser la parallélisation en considérant deux étapes~:
+\begin{enumerate}
+	\item Construction des "grands" nœuds (ceux qui contiennent beaucoup de feuilles), proches de la racine de l'arbre~: la parallélisation se fait sur les triangles.
+	\item Construction des "petits" nœuds, proches des feuilles~: la parallélisation se fait sur les nœuds.
+\end{enumerate}
+Plus précisément, au début de la construction chaque processus est chargé de classer un certain nombre de triangles d'un côté ou de l'autre d'un plan de partitionnement. Le nombre de triangles est grand et le nombre de nœuds est petit, un plus grand nombre de processus s’exécuteront alors en parallèle. A l'inverse, à la fin de la construction le nombre de nœuds est grand et le nombre de triangles par nœud est petit, ce qui explique l'inversion du choix. Cette fois, c'est la construction de chaque sous-arbre qui s'effectuera en parallèle.
+
+L'optimisation de la parallélisation n'est pas la seule différence entre les deux étapes. En effet, l'autre clé de l'algorithme est de calculer rapidement la fonction de coût. L'heuristique utilisée est SAH, comme pour le premier article. La fonction de coût est donc la même~:
+\\\\
+$SAH(x) = C_{ts} + \frac{C_L(x)A_L(x)}{A} + \frac{C_R(x)A_R(x)}{A}$,
+\\\\
+où $C_{ts}$ est le coût de traversée du nœud courant, $C_L(x)$ (resp. $C_R(x)$) est le coût de traversée du nœud gauche (resp. droit) pour le plan de séparation en position $x$, $A$ est l'aire de la surface courante, $A_L(x)$ (resp. $A_R(x)$) est l'aire de la surface du nœud gauche (resp. droit).
+\\\\
+Le calcul de cette fonction est impossible pour le problème de construction de l'arbre car pour calculer le coût au nœud courant, il faut connaître le coût des nœuds fils. La fonction doit donc être estimée. L'approche utilisée ici consiste à calculer $C_L(x)$ et $C_R(x)$ comme si les fils du nœud courant étaient des feuilles.
+
+Cette approximation marche bien pour les nœuds proches des feuilles, c'est à dire pour la deuxième étape de l'algorithme. En revanche, elle n'est pas satisfaisante près de la racine. C'est pourquoi pour la première étape certaines coupures se feront par le pan médian perpendiculaire à l'axe le plus long, ce qui constitue une technique peu coûteuse mais aussi peu efficace pour le parcours de l'arbre. Ceci est valable pour les aires homogènes en terme de densité. Pour les autres, c'est à dire celles dont on peut trouver une partition vide occupant au moins un quart de l'espace, c'est le plan correspondant qui est choisi. La figure \ref{fig:partition}, tirée de l'article, résume cette explication~:
+
+\begin{figure}[!h]
+\centering
+\includegraphics[width=0.75\textwidth]{res/partitioning.png}
+\caption{\label{fig:partition}Deux cas de partitionnement des grands nœuds~: (a) coupure d'espace vide, (b) plan médian.}
+\end{figure}
+
+%TODO insérer démonstration : complexité = O(NlogN)
+
+\subsubsection{Expérimentations}
+Les performances de l'algorithme ont été comparées avec celles de l'algorithme présenté dans le premier article. Il en résulte que l'algorithme sur GPU est 7 fois plus rapide pour une petite scène (\textit{Toys}, 11 000 triangles) et 16 fois plus rapide pour une grande scène (\textit{Fairy Forest}, 178 000 triangles). Les temps de parcours sont comparables pour les deux algorithmes. En revanche, pour les grandes scènes, le coût de traversée d'un arbre construit sur GPU est plus élevé que pour un arbre construit sur CPU. Cela met en lumière le fait que l'utilisation du plan médian pour les grands nœuds n'est pas nécessairement une bonne solution (appliquée à tout l'arbre, elle génère des parcours peu efficaces). Peut-être faudrait-il tester l'application de la méthode d'estimation de la fonction de coût à tout l'arbre et comparer les résultats obtenus avec la méthode "hybride" pour se faire une idée. D'autre part, une étape pourrait être ajouter à l'algorithme pour pallier à ce problème~: une estimation préliminaire du nombre de triangles dans la scène permettrait de choisir une approche ou une autre.
+
+\section{Lectures complémentaires}
+
+Les deux articles se basent sur l'heuristique SAH. Or, celle-ci est fondée sur une approximation de la distribution des rayons lumineux~: ils sont considérés uniformément distribués et forment une ligne infinie, non bloquée par les objets de la scène. (Ingo Wald et al., section 3). Même si la méthode SAH est reconnue d'après les auteurs, il s'avère que cette approximation est éloignée de la réalité, d'après \cite{anti-sah}. En effet, il n'existe qu'un nombre limité de sources de lumières dans une scène, autrement dit les origines des rayons lumineux ne sont pas uniformément distribuées. Cela implique que selon l'angle de vue, un grand nombre de triangles peuvent être invisibles. Dans ce cas, le coût de traversée de ces triangles ne doit pas être considéré.
+
+D'autres hypothèses sont formulées et devraient être vérifiées, essentiellement le fait que le coût de traversée d'un voxel et d'un triangle sont connus.
+\\\\
+L'algorithme de Wald et al. n'utilise pas de parallélisme. D'après \cite{parallel-cpu}, le parallélisme n'est pas très adapté à la méthode à cause du besoin de trier. Le problème est que la parallélisation du tri nécessite un nombre important de processus pour être efficace, surtout sur un grand nombre d'objets à trier, ce qui est précisément le cas pour les triangles d'un scène classique.
+\\\\
+L'algorithme de construction d'arbre kd sur GPU a le mérite d'être une méthode jusqu'ici peu concurrencée. Il est cité dans un bon nombre d'articles sans être fondamentalement remis en cause ou déclaré dépassé. Bien entendu, quelques améliorations ont été proposées, comme l'utilisation d'une autre heuristique estimant mieux la distribution des rayons \cite{anti-sah}.
+
+\section{Ouverture}
+Comme cela est rappelé par Zhou et al., les kd-trees ne sont pas seulement utilisés pour le tracé de rayons. La recherche des plus proches voisins se sert également de cette structure. Il faut néanmoins adapter l'arbre  car les besoins ne sont pas les mêmes \cite{buffered-kdtree}. Comme ceci est expliqué par Zhou et al., les composants de la scène ne sont plus des triangles mais des points, ce qui simplifie certaines étapes de l'algorithme (ex~: plus besoin de cacluler les AABBs). L'heuristique proposée n'est plus SAH, mais VVH, qui prend en compte le volume d'un nœud.
+\\\\
+Il existe d'autres moyens qui permettent d'accélérer la recherche de plus proches voisins ou le lancé de rayons, comme les BVH (Bounding Volume Hierarchies). L'optimisation de leur construction sur GPU est aussi sujette aux recherches \cite{bvh}. Ces structures ont l'avantage de simplifier la répartition des triangles qui ne sont classés que dans un nœud (et non deux à la fois pour les triangles chevauchant le plan de séparation). Cela diminue la taille des structures de données et la mémoire requise pour la construction de l'arbre/BVH. Les auteurs de \cite{bvh} estiment ainsi avoir besoin de jusqu'à dix fois moins de mémoire (section 5) pour 1 million de triangles, soit 100MB. Néanmoins, l'étape cruciale de recherche des meilleurs candidats est plus complexe pour les BVH qui cherchent des volumes d'encadrement pour chacun d'entre eux, alors que les arbres kd n'utilisent que le volume encadrant le nœud à diviser et les plans candidats.
+
+\begin{thebibliography}{1}
+	\bibitem{anti-sah} LIANG, Xiao, YANG, Hongyu, QIAN, Yinling, et al. A Fast Kd-tree Construction for Ray Tracing based on Efficient Ray Distribution. Journal of Software, 2014, vol. 9, no 3, p. 596-604.
+	\bibitem{parallel-cpu} SHEVTSOV, Maxim, SOUPIKOV, Alexei, et KAPUSTIN, Alexander. Highly Parallel Fast KD-tree Construction for Interactive Ray Tracing of Dynamic Scenes. In : Computer Graphics Forum. Blackwell Publishing Ltd, 2007. p. 395-404.
+	\bibitem{buffered-kdtree} GIESEKE, Fabian, HEINERMANN, Justin, OANCEA, Cosmin, et al. Buffer kd trees: processing massive nearest neighbor queries on GPUs. In : Proceedings of The 31st International Conference on Machine Learning. 2014. p. 172-180.
+	\bibitem{bvh} LAUTERBACH, Christian, GARLAND, Michael, SENGUPTA, Shubhabrata, et al. Fast BVH construction on GPUs. In : Computer Graphics Forum. Blackwell Publishing Ltd, 2009. p. 375-384.
+\end{thebibliography}
 
 \section{Some \LaTeX{} Examples}
 \label{sec:examples}
