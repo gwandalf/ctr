@@ -167,25 +167,11 @@ Dans cette section, nous porterons d'abord un regard critique sur les articles e
 
 \subsection{Qualité intrinsèque des articles}
 
-Dans l'article de Wald et al., les versions $O(Nlog^2N)$ et $O(NlogN)$ ont été testées sur des modèles connus (Bunny, Armadillo, Dragon, Buddha, Blade, Thaï, ERW6, Conference Room, Soda Hall et Power Plant). Les résultats qui ont été comparés sont la vitesse d'exécution, le temps passé dans chaque étape, le coût réel de chaque arbre et quelques données comme le nombre de feuilles ou le nombre de triangles par feuille. Il a bien été vérifié que les arbres générés sont proches, les coûts sont donc comparables. Il est constaté que la version en $O(NlogN)$ est effectivement plus rapide, de 2 à 3,5 fois plus que la version en $O(Nlog^2N)$. L'algorithme rapide est cependant limité par la grande taille de la liste d'événements.
+Dans l'article de Wald et al., les versions $O(Nlog^2N)$ et $O(NlogN)$ ont été testées sur des modèles connus (Bunny, Armadillo, Dragon, Buddha, Blade, Thaï, ERW6, Conference Room, Soda Hall et Power Plant). Les résultats qui ont été comparés sont la vitesse d'exécution, le temps passé dans chaque étape, le coût réel de chaque arbre et quelques données comme le nombre de feuilles ou le nombre de triangles par feuille. Il a bien été vérifié que les arbres générés sont proches, les coûts sont donc comparables. Il est constaté que la version en $O(NlogN)$ est effectivement plus rapide, de 2 à 3,5 fois plus que la version en $O(Nlog^2N)$. L'algorithme rapide est cependant limité par la grande taille de la liste d'événements. Il aurait d'ailleurs été souhaitable d'avoir plus d'informations sur la taille de cette structure de données.
 
-L'optimisation permettant d'atteindre O(NlogN) ne nécessite pas grand chose. En fait, il suffit de se rendre compte que sortie le tri des appels récursifs (la faire avant la construction de l'arbre), nous permet d'améliorer la complexité (Note pour moi même : ne pas en dire plus que cela. L'idée c'est de juste mettre ne évidence le fait que cette petite astuce suffit).
+En conclusion, force est de constater que le "pari" est réussi. Cependant, l'amélioration en passant de $O(Nlog^2N)$ à $O(NlogN)$ demeure faible et constante en fonction du nombre de triangles dans la scène, de l'aveu même des auteurs. Ces derniers prennent du recul sur leurs résultats positifs mais faibles. En effet, il est aussi concédé que la version en $O(Nlog^2N)$ pourrait passer en un temps proche de $O(NlogN)$ si le nombre de plans à trier était diminué. Les méthodes présentées considèrent que toutes les partitions de l'espace sont à faire suivant la même méthode, qui produit un grand nombre de plans candidats. Or, ce n'est pas nécessairement la meilleure stratégie, comme le montre le second article.
 
-Pour les tests on peut simplement commenter un peu et formuler les critiques suivantes :
-(-) pas de comparaison avec d'autres approches (vérifier les dates et l'état de l'art)
-(-) beaucoup de colonnes ne sont pas très intéressantes ($N_l$, $N_r$ etc...)
-(-) pas de scènes dynamiques
-
-sur l'article :
-(+) démonstration très complète et rigoureuse.
-
-autres remarques, en vrac :
-Première impression est très positive : la démarche est très rigoureuse et du recul est pris par rapport aux (bons) résultats (expliquer). Le fait que l'algorithme ait prouvé sa valeur dans l'industrie est un argument solide en sa faveur. Dommage quand même que les résultats de performances des traversées des kd-trees ne soient pas présentés (c'est vrai que ce n'est pas le sujet de l'article mais c'est l'essentiel pour les kd-trees).
-	Pas de comparaison en terme place de mémoire prise par les structures de données. Il serait intéressant d'avoir cette information (faire l'expérience pour connaitre cela et donner les conclusions).
-	Part du principe que SAH est la meilleure approche. Existe-t-il d'autres approches reconnues plus rapides (mais certainement pas de meilleure complexité) ?
-	La limite théorique de O(NlogN) n'est pas claire : il est dit que cela est dû au tri mais qui a dit que pour être "intelligent", il fallait absolument implémenter un tri ?
-	
-%TODO faire des recherches pour appuyer / infirmer ces critiques, tirer des critiques de la mise en oeuvre pratique
+Nous apprécions le recul que les auteurs prennent. Ceci est d'autant plus appréciable que dans l'ensemble de l'article, la démarche est très rigoureuse. L'algorithme proposé, même s'il est compliqué à mettre en œuvre (du fait des astuces pour calculer le nombre de triangles et des méthodes de répartition), est divisé en étapes bien documentées. Sur le terrain, le fait que l'algorithme ait prouvé sa valeur (par son intégration dans le système OpenRT) est un argument solide en sa faveur. Il est tout de même dommage que les résultats de performances des traversées des arbres kd ne soient pas présentés.
 
 \subsection{Critique comparative~: évaluation à la lumière d'autres travaux}
 
