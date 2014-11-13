@@ -103,39 +103,22 @@ Pour une dimension $k$ donnée, on construira une liste $E$ d'événements de la
 On remarque alors que tous les événements de même plan sont contigüs. On pourra alors virtuellement subdiviser la liste en groupes, chacun étiqueté par un plan.
 
 Ceci nous permet de réécrire la fonction $TrouverPlan$~:
-\\\\
-$$function TrouverPlan(Triangles T, Voxel V)
-	entier min = MAX_INT
-	Plan p_{res}
-	Pour k = 1, 2, 3~:
-		E = InitListeEvenements(k, T, V)
-		trier(E)
-		N_g = 0, N_p = 0, N_d = taille(T)
-		Pour tous les groupes g_{\epsilon} de E, pris dans l'ordre~:
-			nb_-, nb_|, nb_+ = compterTypes(g_{\epsilon})
+%\begin{algorithm}
+%\SetKwProg{function}{Function}{}{}
+%\function{TrouverPlan(Triangles T, Voxel V)}{
+%	entier min = $\infty$
+%	Plan $p_{res}$
+%	\For{k = 1, 2, 3}{
+%		E = InitListeEvenements(k, T, V)
+%		trier(E)
+%		N_g = 0, N_p = 0, N_d = taille(T)
+%		Pour tous les groupes g_{\epsilon} de E, pris dans l'ordre~:
+%			nb_-, nb_|, nb_+ = compterTypes(g_{\epsilon})
 			%TODO : copié coller de l'article
-	retourne p_{res}$$
-\\\\
-
-\subsubsection{A rédiger correctement...}
-L'optimisation permettant d'atteindre O(NlogN) ne nécessite pas grand chose. En fait, il suffit de se rendre compte que sortie le tri des appels récursifs (la faire avant la construction de l'arbre), nous permet d'améliorer la complexité (Note pour moi même : ne pas en dire plus que cela. L'idée c'est de juste mettre ne évidence le fait que cette petite astuce suffit).
-
-Pour les tests on peut simplement commenter un peu et formuler les critiques suivantes :
-(-) pas de comparaison avec d'autres approches (vérifier les dates et l'état de l'art)
-(-) beaucoup de colonnes ne sont pas très intéressantes ($N_l$, $N_r$ etc...)
-(-) pas de scènes dynamiques
-
-sur l'article :
-(+) démonstration très complète et rigoureuse.
-(~) pas d'utilisation du parallélisme (ce serait encore mieux)
-
-autres remarques, en vrac :
-Première impression est très positive : la démarche est très rigoureuse et du recul est pris par rapport aux (bons) résultats (expliquer). Le fait que l'algorithme ait prouvé sa valeur dans l'industrie est un argument solide en sa faveur. Dommage quand même que les résultats de performances des traversées des kd-trees ne soient pas présentés (c'est vrai que ce n'est pas le sujet de l'article mais c'est l'essentiel pour les kd-trees).
-	Pas de comparaison en terme place de mémoire prise par les structures de données. Il serait intéressant d'avoir cette information (faire l'expérience pour connaitre cela et donner les conclusions).
-	Part du principe que SAH est la meilleure approche. Existe-t-il d'autres approches reconnues plus rapides (mais certainement pas de meilleure complexité) ?
-	La limite théorique de O(NlogN) n'est pas claire : il est dit que cela est dû au tri mais qui a dit que pour être "intelligent", il fallait absolument implémenter un tri ?
-	
-%TODO faire des recherches pour appuyer / infirmer ces critiques, tirer des critiques de la mise en oeuvre pratique
+%	}
+%	\Return{$p_{res}$}
+%}
+%\end{algorithm}
 
 \subsection{Parallélisation de la construction sur GPU}
 
@@ -176,9 +159,35 @@ Cette approximation marche bien pour les nœuds proches des feuilles, c'est à d
 %TODO insérer démonstration : complexité = O(NlogN)
 
 \subsubsection{Expérimentations}
-Les performances de l'algorithme ont été comparées avec celles de l'algorithme présenté dans le premier article. Il en résulte que l'algorithme sur GPU est 7 fois plus rapide pour une petite scène (\textit{Toys}, 11 000 triangles) et 16 fois plus rapide pour une grande scène (\textit{Fairy Forest}, 178 000 triangles). Les temps de parcours sont comparables pour les deux algorithmes. En revanche, pour les grandes scènes, le coût de traversée d'un arbre construit sur GPU est plus élevé que pour un arbre construit sur CPU. Cela met en lumière le fait que l'utilisation du plan médian pour les grands nœuds n'est pas nécessairement une bonne solution (appliquée à tout l'arbre, elle génère des parcours peu efficaces). Peut-être faudrait-il tester l'application de la méthode d'estimation de la fonction de coût à tout l'arbre et comparer les résultats obtenus avec la méthode "hybride" pour se faire une idée. D'autre part, une étape pourrait être ajouter à l'algorithme pour pallier à ce problème~: une estimation préliminaire du nombre de triangles dans la scène permettrait de choisir une approche ou une autre.
+Les performances de l'algorithme ont été comparées avec celles de l'algorithme présenté dans le premier article. Il en résulte que l'algorithme sur GPU est 7 fois plus rapide pour une petite scène (\textit{Toys}, 11 000 triangles) et 16 fois plus rapide pour une grande scène (\textit{Fairy Forest}, 178 000 triangles). Les temps de parcours sont comparables pour les deux algorithmes. En revanche, pour les grandes scènes, le coût de traversée d'un arbre construit sur GPU est plus élevé que pour un arbre construit sur CPU. Cela met en lumière le fait que l'utilisation du plan médian pour les grands nœuds n'est pas nécessairement une bonne solution (appliquée à tout l'arbre, elle génère des parcours peu efficaces). Peut-être faudrait-il tester l'application de la méthode d'estimation de la fonction de coût à tout l'arbre et comparer les résultats obtenus avec la méthode "hybride" pour se faire une idée. D'autre part, une étape pourrait être ajoutée à l'algorithme pour pallier à ce problème~: une estimation préliminaire du nombre de triangles dans la scène permettrait de choisir une approche ou une autre.
 
-\section{Lectures complémentaires}
+\section{Commentaires critiques}
+
+Dans cette section, nous porterons d'abord un regard critique sur les articles eux-mêmes en partant des expériences de validation, puis nous élargirons en comparant les méthodes présentées avec l'état de l'art aujourd'hui.
+
+\subsection{Qualité intrinsèque des articles}
+
+Dans l'article de Wald et al., les versions $O(Nlog^2N)$ et $O(NlogN)$ ont été testées sur des modèles connus (Bunny, Armadillo, Dragon, Buddha, Blade, Thaï, ERW6, Conference Room, Soda Hall et Power Plant). Les résultats qui ont été comparés sont la vitesse d'exécution, le temps passé dans chaque étape, le coût réel de chaque arbre et quelques données comme le nombre de feuilles ou le nombre de triangles par feuille. Il a bien été vérifié que les arbres générés sont proches, les coûts sont donc comparables. Il est constaté que la version en $O(NlogN)$ est effectivement plus rapide, de 2 à 3,5 fois plus que la version en $O(Nlog^2N)$. L'algorithme rapide est cependant limité par la grande taille de la liste d'événements.
+
+L'optimisation permettant d'atteindre O(NlogN) ne nécessite pas grand chose. En fait, il suffit de se rendre compte que sortie le tri des appels récursifs (la faire avant la construction de l'arbre), nous permet d'améliorer la complexité (Note pour moi même : ne pas en dire plus que cela. L'idée c'est de juste mettre ne évidence le fait que cette petite astuce suffit).
+
+Pour les tests on peut simplement commenter un peu et formuler les critiques suivantes :
+(-) pas de comparaison avec d'autres approches (vérifier les dates et l'état de l'art)
+(-) beaucoup de colonnes ne sont pas très intéressantes ($N_l$, $N_r$ etc...)
+(-) pas de scènes dynamiques
+
+sur l'article :
+(+) démonstration très complète et rigoureuse.
+
+autres remarques, en vrac :
+Première impression est très positive : la démarche est très rigoureuse et du recul est pris par rapport aux (bons) résultats (expliquer). Le fait que l'algorithme ait prouvé sa valeur dans l'industrie est un argument solide en sa faveur. Dommage quand même que les résultats de performances des traversées des kd-trees ne soient pas présentés (c'est vrai que ce n'est pas le sujet de l'article mais c'est l'essentiel pour les kd-trees).
+	Pas de comparaison en terme place de mémoire prise par les structures de données. Il serait intéressant d'avoir cette information (faire l'expérience pour connaitre cela et donner les conclusions).
+	Part du principe que SAH est la meilleure approche. Existe-t-il d'autres approches reconnues plus rapides (mais certainement pas de meilleure complexité) ?
+	La limite théorique de O(NlogN) n'est pas claire : il est dit que cela est dû au tri mais qui a dit que pour être "intelligent", il fallait absolument implémenter un tri ?
+	
+%TODO faire des recherches pour appuyer / infirmer ces critiques, tirer des critiques de la mise en oeuvre pratique
+
+\subsection{Critique comparative~: évaluation à la lumière d'autres travaux}
 
 Les deux articles se basent sur l'heuristique SAH. Or, celle-ci est fondée sur une approximation de la distribution des rayons lumineux~: ils sont considérés uniformément distribués et forment une ligne infinie, non bloquée par les objets de la scène. (Ingo Wald et al., section 3). Même si la méthode SAH est reconnue d'après les auteurs, il s'avère que cette approximation est éloignée de la réalité, d'après \cite{anti-sah}. En effet, il n'existe qu'un nombre limité de sources de lumières dans une scène, autrement dit les origines des rayons lumineux ne sont pas uniformément distribuées. Cela implique que selon l'angle de vue, un grand nombre de triangles peuvent être invisibles. Dans ce cas, le coût de traversée de ces triangles ne doit pas être considéré.
 
