@@ -118,25 +118,40 @@ En pratique, il n'est pas possible d'implémenter ces suites avec des simples ta
 
 Pour une dimension $k$ donnée, on construira une liste $E$ d'événements de la manière suivante~: Pour chaque triangle $t$, on générera tous les événements associant ce triangle à un plan candidat "en contact" et on précisera la nature de ce contact (+, - ou |). Cette construction a une complexité temporelle de $O(N)$. Par soucis de concision, nous ne donnerons pas les détails du calcul ici. La liste $E$ devra ensuite être triée, ce qui donne une complexité de $O(NlogN)$ avec un tri rapide. Le critère de tri est le suivant~: soient deux événements $e_1$ = ($t_1$, $\epsilon_1$, $type_1$) et $e_2$ = ($t_2$, $\epsilon_2$, $type_2$). Si $\epsilon_1 \inf \epsilon_2$, alors $e_1 \inf e_2$. En cas d'égalité, on utilise un ordre arbitraire sur +, - et |. Les auteurs de l'article proposent - $\inf$ | $\inf$ +.
 
-On remarque alors que tous les événements de même plan sont contigüs. On pourra alors virtuellement subdiviser la liste en groupes, chacun étiqueté par un plan.
+On remarque alors que tous les événements de même plan sont contigus. On pourra alors virtuellement subdiviser la liste en groupes, chacun étiqueté par un plan.
 
 Ceci nous permet de réécrire la fonction $TrouverPlan$~:
-%\begin{algorithm}
-%\SetKwProg{function}{Function}{}{}
-%\function{TrouverPlan(Triangles T, Voxel V)}{
-%	entier min = $\infty$
-%	Plan $p_{res}$
-%	\For{k = 1, 2, 3}{
-%		E = InitListeEvenements(k, T, V)
-%		trier(E)
-%		N_g = 0, N_p = 0, N_d = taille(T)
-%		Pour tous les groupes g_{\epsilon} de E, pris dans l'ordre~:
-%			nb_-, nb_|, nb_+ = compterTypes(g_{\epsilon})
-			%TODO : copié coller de l'article
-%	}
-%	\Return{$p_{res}$}
-%}
-%\end{algorithm}
+\begin{algorithm}
+\SetKwProg{function}{Function}{}{}
+\function{TrouverPlan(Triangles T, Voxel V)}{
+	entier min = $\infty$
+	Plan $p_{res}$
+	\For{k = 1, 2, 3}{
+		E = InitListeEvenements(k, T, V)
+		trier(E)
+		$N_g = 0, N_p = 0, N_d = taille(T)$
+		\ForAll{groupes $g_{\epsilon}$ de E, pris dans l'ordre}{
+			$nb_-, nb_|, nb_+ = compterTypes(g_{\epsilon})$
+			$N_p = nb_|, N_r -= (nb_| + nb_-)$
+			coût = $SAH(V, p, N_g, N_d)$\;
+			\If{coût$ \leq min$}{
+				min = coût\;
+				$p_{res}$ = p\;
+			}
+		}
+		$N_p = 0, N_l += nb_| + nb_+$
+	}
+	\Return{$p_{res}$}
+}
+\end{algorithm}
+
+La complexité de cet algorithme est de $O(NlogN)$, car on répète un nombre constant de fois le tri. La complexité totale de l'algorithme de construction d'arbre se ramène alors $O(Nlog^2N)$ (nous ne le démontrerons pas ici).
+
+En fait, il suffit d'avoir une petite astuce pour arriver à obtenir un algorithme en $O(NlogN)$~: ce qui est "embêtant" ici, c'est finalement le fait de devoir trier la liste $E$ à chaque fois. Les auteurs proposent donc de calculer la liste de tous les événements générés par l'espace une bonne fois pour toute avant la construction de l'arbre. Ce à quoi il faut faire attention ensuite est de garder cette liste triée tout en la partitionnant selon le plan choisi à chaque nœud et tout en gardant une complexité de $O(N)$ pour la construction d'un nœud. Cela n'est pas difficile en pratique, car une sous-liste de liste triée est triée et peut être généré par un seul balayage de la liste d'origine. Ainsi, on se retrouve avec une complexité de construction de~:
+\\\\
+$T(N) = N + 2T(\frac{N}{2}) = O(NlogN)$
+\\\\
+Ceci est équivalent à la complexité du tri, qui s'ajoute. La complexité totale est donc bien de $O(NlogN)$.
 
 \subsubsection{Algorithme GPU}
 
