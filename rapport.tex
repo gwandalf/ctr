@@ -34,11 +34,31 @@ Cette méthode est bien plus efficace qu'un parcours de la liste des triangles p
 
 \textit{Cette sous-partie traite exclusivement de l'article} On building fast kd-Trees for Ray Tracing, and on doing that in O(N log N)\textit{, de Ingo Wald et Vlastimil Havran.}
 
-La proposition d'algorithme est tirée d'un algorithme en $O(N.log^2(N))$ ré-adapté. Comme pour tous les algorithmes, de construction de kd-trees, ce qui est déterminant est la recherche du plan séparateur en chaque noeud. Pour ce faire, il faut trouver un plan aligné sur un des axes de la base du repère qui minimise le côut estimé de traversée des deux voxels. L'approche utilisée pour calculer ce coût est l'heuristique SAH\footnote{Surface Area Heuristique}. Le coût alors calculé est~:
+La proposition d'algorithme est tirée d'un algorithme en $O(N.log^2(N))$ ré-adapté.
 
 %TODO formule du coût.
 
-On doit considérer que pour un voxel de dimensions données et non coupé, son côut de traversée dépend uniquement du nombre de triangles qu'il contient.
+\subsection{Parallélisation de la construction sur GPU}
+
+Le but de cet article est de présenter un algorithme rapide de construction des kd-trees sur GPU (Graphics Processing Unit)\footnote{Pour rappel, les GPUs jouent le rôle de CPUs simplifiées et utilisées en parallèle avec un très grand nombre d'autres GPUs (plusieurs milliers).}. Tout d'abord, l'état de l'art de la construction des kd-trees est rappelé, puis la solution est proposée et expliquée en détails. Enfin, une évaluation de l'algorithme est réalisée par tests sur trois cas d'utilisation~: le tracé de rayons, le placage de photons\footnote{Technique permettant de simuler l'illumination dans une scène graphique.} (\textit{Photon Mapping} en anglais) et la recherche des plus proches voisins dans un nuage de points.
+
+\subsection{Etat de l'art}
+Pour les deux articles, les auteurs partent du constat qu'on cherche en général à construire des arbres kd efficaces pour la recherche dans un espace à $k$ dimensions, sans prendre en compte le temps de construction de l'arbre. Il est vrai que ceci n'est pas un gros problème pour des petits espaces. Cependant, les espaces deviennent de plus en plus grands et de plus en plus denses, ce qui met au premier plan la nécessité de disposer d'algorithmes rapides.
+Le premier article présente un algorithme permettant de construire des arbres kd efficaces avec une complexité de $O(N.log(N))$, par rapport à des algorithmes de complexité $O(Nlog^2N)$ ou même $O(N^2)$. Les auteurs du deuxième article proposent une méthode de parallélisation massive sur GPU. En effet, bien que largement moins parallélisables qu'avec des GPUs, les algorithmes parallèles sur CPU sont plus performants pour les scènes dynamiques que les algorithmes sur GPU proposés jusqu'au moment où a été écrit l'article. Le défi des auteurs est donc de proposer un algorithme de construction d'arbres kd sur GPU adaptés aux scènes dynamiques et plus performant que les algorithmes CPU actuels.
+
+\subsection{Présentation du problème et des méthodes employées}
+
+\subsubsection{Problème à résoudre}
+D'un algorithme de construction d'arbre kd à un autre, ce qui change c'est la stratégie recherche du plan séparateur en chaque nœud. Les deux approches jouent donc sur ce paramètre pour accélérer la construction. En général, on cherche trouver un plan aligné sur un des axes de la base du repère qui minimise le coût estimé de traversée des deux voxels. Pour ce faire, les deux algorithmes utilisent la même approche~: l'heuristique SAH\footnote{Surface Area Heuristique}. Le coût alors calculé pour la traversée d'un voxel séparé par un plan est~:
+\\\\
+$SAH(x) = C_{ts} + \frac{C_L(x)A_L(x)}{A} + \frac{C_R(x)A_R(x)}{A}$,
+\\\\
+où $C_{ts}$ est le coût de traversée du nœud courant, $C_L(x)$ (resp. $C_R(x)$) est le coût de traversée du nœud gauche (resp. droit) pour le plan de séparation en position $x$, $A$ est l'aire de la surface courante, $A_L(x)$ (resp. $A_R(x)$) est l'aire de la surface du nœud gauche (resp. droit).
+\\\\
+Le calcul de cette fonction est impossible pour le problème de construction de l'arbre car pour calculer le coût au nœud courant, il faut connaître le coût des nœuds fils. La fonction doit donc être estimée. L'approche utilisée ici consiste à calculer $C_L(x)$ et $C_R(x)$ comme si les fils du nœud courant étaient des feuilles.
+
+\subsubsection{Algorithme en O(NlogN)}
+On doit considérer que pour un voxel de dimensions données et non coupé, son coût de traversée dépend uniquement du nombre de triangles qu'il contient.
 Des considérations heuristiques permettent de définir un ensemble de plans candidats, à partir desquels sera choisi le plan minimisant le coût. L'idée de base pour trouver les candidats est de ne sélectionner que les plans qui délimitent les AABB\footnote{Axis Aligned Bounding Box} des triangles, car ce sont les endroits où le nombre de triangles change d'un c\^oté et de l'autre du plan, ce qui provoque des sauts dans la fonction de co\^ut. Les minimums sont donc à chercher à ces positions.
 
 Puisque l'on veut connaître la complexité de nos algorithmes, commençons par identifier les grandes étapes d'un algorithme de construction d'un kd-tree. En pseudo-code, les fonctions de construction classiques dont on veut connaître la complexité suivent cet algorithme~:
@@ -118,32 +138,17 @@ Ceci nous permet de réécrire la fonction $TrouverPlan$~:
 %}
 %\end{algorithm}
 
-\subsection{Parallélisation de la construction sur GPU}
+\subsubsection{Algorithme GPU}
 
-Le but de cet article est de présenter un algorithme rapide de construction des kd-trees sur GPU (Graphics Processing Unit)\footnote{Pour rappel, les GPUs jouent le rôle de CPUs simplifiées et utilisées en parallèle avec un très grand nombre d'autres GPUs (plusieurs milliers).}. Tout d'abord, l'état de l'art de la construction des kd-trees est rappelé, puis la solution est proposée et expliquée en détails. Enfin, une évaluation de l'algorithme est réalisée par tests sur trois cas d'utilisation~: le tracé de rayons, le placage de photons\footnote{Technique permettant de simuler l'illumination dans une scène graphique.} (\textit{Photon Mapping} en anglais) et la recherche des plus proches voisins dans un nuage de points.
-
-\subsection{Etat de l'art}
-Pour les deux articles, les auteurs partent du constat qu'on cherche en général à construire des arbres kd efficaces pour la recherche dans un espace à $k$ dimensions, sans prendre en compte le temps de construction de l'arbre. Il est vrai que ceci n'est pas un gros problème pour des petits espaces. Cependant, les espaces deviennent de plus en plus grands et de plus en plus denses, ce qui met au premier plan la nécessité de disposer d'algorithmes rapides.
-Le premier article présente un algorithme permettant de construire des arbres kd efficaces avec une complexité de $O(N.log(N))$, par rapport à des algorithmes de complexité $O(Nlog^2N)$ ou même $O(N^2)$. Les auteurs du deuxième article proposent une méthode de parallélisation massive sur GPU. En effet, bien que largement moins parallélisables qu'avec des GPUs, les algorithmes parallèles sur CPU sont plus performants pour les scènes dynamiques que les algorithmes sur GPU proposés jusqu'au moment où a été écrit l'article. Le défi des auteurs est donc de proposer un algorithme de construction d'arbres kd sur GPU adaptés aux scènes dynamiques et plus performant que les algorithmes CPU actuels.
-
-\subsubsection{Vue d'ensemble de l'algorithme}
-
-La clé de l'algorithme est d'optimiser la parallélisation en considérant deux étapes~:
+Tout d'abord, il convient de préciser que l'algorithme est composé de deux étapes qui sont destinées à optimiser la parallélisation~:
 \begin{enumerate}
 	\item Construction des "grands" nœuds (ceux qui contiennent beaucoup de feuilles), proches de la racine de l'arbre~: la parallélisation se fait sur les triangles.
 	\item Construction des "petits" nœuds, proches des feuilles~: la parallélisation se fait sur les nœuds.
 \end{enumerate}
 Plus précisément, au début de la construction chaque processus est chargé de classer un certain nombre de triangles d'un côté ou de l'autre d'un plan de partitionnement. Le nombre de triangles est grand et le nombre de nœuds est petit, un plus grand nombre de processus s’exécuteront alors en parallèle. A l'inverse, à la fin de la construction le nombre de nœuds est grand et le nombre de triangles par nœud est petit, ce qui explique l'inversion du choix. Cette fois, c'est la construction de chaque sous-arbre qui s'effectuera en parallèle.
-
-L'optimisation de la parallélisation n'est pas la seule différence entre les deux étapes. En effet, l'autre clé de l'algorithme est de calculer rapidement la fonction de coût. L'heuristique utilisée est SAH, comme pour le premier article. La fonction de coût est donc la même~:
 \\\\
-$SAH(x) = C_{ts} + \frac{C_L(x)A_L(x)}{A} + \frac{C_R(x)A_R(x)}{A}$,
-\\\\
-où $C_{ts}$ est le coût de traversée du nœud courant, $C_L(x)$ (resp. $C_R(x)$) est le coût de traversée du nœud gauche (resp. droit) pour le plan de séparation en position $x$, $A$ est l'aire de la surface courante, $A_L(x)$ (resp. $A_R(x)$) est l'aire de la surface du nœud gauche (resp. droit).
-\\\\
-Le calcul de cette fonction est impossible pour le problème de construction de l'arbre car pour calculer le coût au nœud courant, il faut connaître le coût des nœuds fils. La fonction doit donc être estimée. L'approche utilisée ici consiste à calculer $C_L(x)$ et $C_R(x)$ comme si les fils du nœud courant étaient des feuilles.
-
-Cette approximation marche bien pour les nœuds proches des feuilles, c'est à dire pour la deuxième étape de l'algorithme. En revanche, elle n'est pas satisfaisante près de la racine. C'est pourquoi pour la première étape certaines coupures se feront par le pan médian perpendiculaire à l'axe le plus long, ce qui constitue une technique peu coûteuse mais aussi peu efficace pour le parcours de l'arbre. Ceci est valable pour les aires homogènes en terme de densité. Pour les autres, c'est à dire celles dont on peut trouver une partition vide occupant au moins un quart de l'espace, c'est le plan correspondant qui est choisi. La figure \ref{fig:partition}, tirée de l'article, résume cette explication~:
+Comme cela a été dit, la fonction de coût doit être estimée. Les coûts des enfants du nœud dont on veut calculer le coût de traversée sont considérés comme étant des coûts feuilles et non de nœuds.
+Cette approximation marche bien pour les nœuds proches des feuilles, c'est à dire pour la deuxième étape de l'algorithme. En revanche, elle n'est pas satisfaisante près de la racine. C'est pourquoi pour la première étape certaines coupures se feront par le plan médian perpendiculaire à l'axe le plus long, ce qui constitue une technique peu coûteuse mais aussi peu efficace pour le parcours de l'arbre. Ceci est valable pour les aires homogènes en terme de densité. Pour les autres, c'est à dire celles dont on peut trouver une partition vide occupant au moins un quart de l'espace, c'est le plan correspondant qui est choisi. La figure \ref{fig:partition}, tirée de l'article, résume cette explication~:
 
 \begin{figure}[!h]
 \centering
