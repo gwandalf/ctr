@@ -34,8 +34,6 @@ Cette méthode est bien plus efficace qu'un parcours de la liste des triangles p
 
 \textit{Cette sous-partie traite exclusivement de l'article} On building fast kd-Trees for Ray Tracing, and on doing that in O(N log N)\textit{, de Ingo Wald et Vlastimil Havran.}
 
-L'article présente un algorithme permettant de construire des kd-Trees efficaces avec une complexité de $O(N.log(N))$. Les auteurs partent du constat qu'on cherche en général à construires des kd-Trees efficaces pour la recherche dans un espace à $k$ dimensions, sans prendre en compte le temps de construction du kd-Tree. Il est vrai que ceci n'est pas un gros problème pour des petits espaces. Cependant, les espaces deviennent de plus en plus grands et de plus en plus denses, ce qui met eu premier plan la nécessité de disposer d'algorithmes rapides. Or, la plupart des algorithmes utilisés aujourd'hui ont une complexité de $O(Nlog^2N)$ ou même de $O(N^2)$. Il est dit que la limite inférieure théoriquement atteignable est $O(N.log(N))$.
-
 La proposition d'algorithme est tirée d'un algorithme en $O(N.log^2(N))$ ré-adapté. Comme pour tous les algorithmes, de construction de kd-trees, ce qui est déterminant est la recherche du plan séparateur en chaque noeud. Pour ce faire, il faut trouver un plan aligné sur un des axes de la base du repère qui minimise le côut estimé de traversée des deux voxels. L'approche utilisée pour calculer ce coût est l'heuristique SAH\footnote{Surface Area Heuristique}. Le coût alors calculé est~:
 
 %TODO formule du coût.
@@ -122,14 +120,11 @@ Ceci nous permet de réécrire la fonction $TrouverPlan$~:
 
 \subsection{Parallélisation de la construction sur GPU}
 
-\textit{Cette sous-partie traite exclusivement de l'article} Real-Time KD-Tree Construction on Graphics Hardware\textit{, de Kun Zhou, Qiming Hou, Rui Wang et Baining Guo.}
-
 Le but de cet article est de présenter un algorithme rapide de construction des kd-trees sur GPU (Graphics Processing Unit)\footnote{Pour rappel, les GPUs jouent le rôle de CPUs simplifiées et utilisées en parallèle avec un très grand nombre d'autres GPUs (plusieurs milliers).}. Tout d'abord, l'état de l'art de la construction des kd-trees est rappelé, puis la solution est proposée et expliquée en détails. Enfin, une évaluation de l'algorithme est réalisée par tests sur trois cas d'utilisation~: le tracé de rayons, le placage de photons\footnote{Technique permettant de simuler l'illumination dans une scène graphique.} (\textit{Photon Mapping} en anglais) et la recherche des plus proches voisins dans un nuage de points.
 
-\subsubsection{Etat de l'art}
-Il est d'abord rappelé que les optimisations de kd-trees ont jusque là été menées dans le but d'améliorer le parcours de l'arbre, en proposant des partitions pertinentes. Cependant, une telle approche rend la construction des kd-trees longue, car il faut évaluer une fonction de coût\footnote{Coût du parcours en fonction de la position du plan.} dont on veut déterminer le minimum. Les auteurs mentionnent certaines améliorations proposées afin d'améliorer le temps de construction tout en conservant un parcours de bonne qualité. Ainsi, l'algorithme présenté dans le premier article \textit{On building fast kd-trees for Ray Tracing, and on doing that in O(N log N)} est cité, mais déploré trop long pour les scènes très animées.
-
-Certaines méthodes exploitant le parallélisme sur CPU ont été étudiées. Bien que largement moins parallélisables qu'avec des GPUs, ces algorithmes sont plus performants pour les scènes dynamiques que les algorithmes sur GPU proposés jusqu'à maintenant. Le défi des auteurs est donc de proposer un algorithme de construction de kd-trees sur GPU adapté aux scènes dynamiques et plus performant que les algorithmes CPU actuels.
+\subsection{Etat de l'art}
+Pour les deux articles, les auteurs partent du constat qu'on cherche en général à construire des arbres kd efficaces pour la recherche dans un espace à $k$ dimensions, sans prendre en compte le temps de construction de l'arbre. Il est vrai que ceci n'est pas un gros problème pour des petits espaces. Cependant, les espaces deviennent de plus en plus grands et de plus en plus denses, ce qui met au premier plan la nécessité de disposer d'algorithmes rapides.
+Le premier article présente un algorithme permettant de construire des arbres kd efficaces avec une complexité de $O(N.log(N))$, par rapport à des algorithmes de complexité $O(Nlog^2N)$ ou même $O(N^2)$. Les auteurs du deuxième article proposent une méthode de parallélisation massive sur GPU. En effet, bien que largement moins parallélisables qu'avec des GPUs, les algorithmes parallèles sur CPU sont plus performants pour les scènes dynamiques que les algorithmes sur GPU proposés jusqu'au moment où a été écrit l'article. Le défi des auteurs est donc de proposer un algorithme de construction d'arbres kd sur GPU adaptés aux scènes dynamiques et plus performant que les algorithmes CPU actuels.
 
 \subsubsection{Vue d'ensemble de l'algorithme}
 
@@ -162,7 +157,7 @@ Cette approximation marche bien pour les nœuds proches des feuilles, c'est à d
 
 Dans cette section, nous porterons d'abord un regard critique sur les articles eux-mêmes en partant des expériences de validation, puis nous élargirons en comparant les méthodes présentées avec l'état de l'art aujourd'hui.
 
-\subsection{Qualité intrinsèque des articles}
+\subsection{Évaluation des résultats et des approches}
 
 Dans l'article de Wald et al., les versions $O(Nlog^2N)$ et $O(NlogN)$ ont été testées sur des modèles connus (Bunny, Armadillo, Dragon, Buddha, Blade, Thaï, ERW6, Conference Room, Soda Hall et Power Plant). Les résultats qui ont été comparés sont la vitesse d'exécution, le temps passé dans chaque étape, le coût réel de chaque arbre et quelques données comme le nombre de feuilles ou le nombre de triangles par feuille. Il a bien été vérifié que les arbres générés sont proches, les coûts sont donc comparables. Il est constaté que la version en $O(NlogN)$ est effectivement plus rapide, de 2 à 3,5 fois plus que la version en $O(Nlog^2N)$. L'algorithme rapide est cependant limité par la grande taille de la liste d'événements. Il aurait d'ailleurs été souhaitable d'avoir plus d'informations sur la taille de cette structure de données.
 
@@ -176,7 +171,7 @@ Les deux autres cas d'utilisation (le placage de photons et la recherche des plu
 
 Quoi qu'il en soit, il est évident que cet algorithme est bien meilleur que les approches basées sur la CPU. En comparaison avec l'article précédent, les améliorations sont bien visibles. Néanmoins, les choix qui sont faits sont moins rigoureusement justifiés. Alors que l'article précédent prouve mathématiquement la complexité obtenue et soumet les améliorations théoriques aux tests, les auteurs de cet article se contentent d'expliquer leurs choix sans les remettre en cause. Une validation par les tests aurait été souhaitable, car leur argument principal repose sur le parallélisme, qui prête moins aux démonstrations mathématiques et plus aux heuristiques.
 
-\subsection{Critique comparative~: évaluation à la lumière d'autres travaux}
+\subsection{Critique comparative}
 
 Si l'on replace les deux articles dans l'état de la recherche aujourd'hui, on constate que les deux articles sont souvent cités pour être remis en cause, malgré leur qualité reconnue. 
 
