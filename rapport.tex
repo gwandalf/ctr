@@ -7,7 +7,7 @@
 \usepackage[colorinlistoftodos]{todonotes}
 \usepackage[french]{algorithm2e}
 
-\title{Rapport CTR : Kd-Trees}
+\title{Rapport CTR : Arbres kd}
 
 \author{Gwendal Le Moulec}
 
@@ -22,25 +22,25 @@ Your abstract.
 
 \section{Introduction}
 
-Aujourd'hui, la modélisation 3D doit faire face à des scènes de plus en plus complexes. Cette croissance doit être suivie par des algorithmes de plus en plus efficaces pour gérer la position des objets dans l'espace. Cette classe de problèmes utilise généralement une structure d'arbre dénommée \textbf{kd-Tree}\footnote{kd-Tree : représentation d'un espace de k dimensions sous forme d'arbre binaire. La racine représente l'espace entier et chaque fils représente un sous-espace de l'espace père défini par coupure par un plan $P$ perpendiculaire à l'un des axes du repère orthogonal.}. Pour le calcul de la vue en 2D obtenue à partir d'un certain endroit de la scène par exemple, la technique du lancé de rayons utilise cette structure. Ainsi, lorsque l'on cherche les points d'intersection d'une demie-droite avec les objets de la scène, il suffit de parcourir l'arbre en ne considérant que les noeuds sous-espaces pour lesquels il y a effectivement intersection. Un exemple d'espace 2D partitionné et le kd-tree associés sont respectivements représentés en figures \ref{} et \ref{}. Sur l'arbre, les chemins parcourus pour chercher les points d'intersection avec les sous-espaces sont en rouge et les feuilles pour lesquelles il y a effectivement intersection sont marqués d'un I.
+Aujourd'hui, la modélisation 3D doit faire face à des scènes de plus en plus complexes. Cette croissance doit être suivie par des algorithmes de plus en plus efficaces pour gérer la position des objets dans l'espace. Cette classe de problèmes utilise généralement une structure d'arbre dénommée \textbf{kd-Tree}\footnote{kd-Tree : représentation d'un espace de k dimensions sous forme d'arbre binaire. La racine représente l'espace entier et chaque fils représente un sous-espace de l'espace père défini par coupure par un plan $P$ perpendiculaire à l'un des axes du repère orthogonal.}. Pour le calcul de la vue en 2D obtenue à partir d'un certain endroit de la scène par exemple, la technique du lancé de rayons utilise cette structure. Ainsi, lorsque l'on cherche les points d'intersection d'une demie-droite avec les objets de la scène, il suffit de parcourir l'arbre en ne considérant que les nœuds sous-espaces pour lesquels il y a effectivement intersection. Un exemple d'espace 2D partitionné et le kd-tree associés sont respectivement représentés en figures \ref{fig:espace} et \ref{fig:kdtree}. Sur l'arbre, les chemins parcourus pour chercher les points d'intersection avec les sous-espaces sont en rouge et les feuilles pour lesquelles il y a effectivement intersection sont marqués d'un I.
 
-%TODO insérer les figures
+\begin{figure}[!h]
+\centering
+\includegraphics[width=0.5\textwidth]{res/espace.png}
+\caption{\label{fig:espace}Espace 2D traversé par un rayon.}
+\end{figure}
+
+\begin{figure}[!h]
+\centering
+\includegraphics[width=0.5\textwidth]{res/kdtree.png}
+\caption{\label{fig:kdtree}Arbre kd correspondant.}
+\end{figure}
 
 Cette méthode est bien plus efficace qu'un parcours de la liste des triangles présents dans la scène. En effet, pour un nombre $N$ de triangles, la complexité d'une recherche "naïve" est d'ordre $O(N)$, alors que l'utilisation d'un kd-tree amène une complexité d'ordre $O(log(N))$.
+On cherche en général à construire des arbres kd de façon à accélérer la recherche. Cependant il ne faut pas négliger le temps de construction de l'arbre. C'est précisément à ce problème que les articles présentés apportent une solution. Le premier article, \textit{On building fast kd-Trees for Ray Tracing, and on doing that in O(NlogN)}, de Wald et al., présente un algorithme de complexité $O(NlogN)$, par amélioration d'un algorithme en $O(Nlog^2N)$. L'article suivant, \textit{Real-Time KD-Tree Construction on Graphics Hardware}, de Zhou et al., propose une autre approche, qui consiste à paralléliser au maximum le calcul grâce aux GPUs.
+Nous exposerons tout d'abord les états de l'art qui sont faits par les auteurs des deux articles, puis nous présenterons le point commun des deux approches et les deux manières de résoudre le problème alors posé. Enfin, les articles feront l'objet de critiques mettant en avant aussi bien les qualités que les défauts des méthodes employées et de la présentation des résultats. Les articles seront pour cela replacés dans le contexte de la recherche sur le sujet aujourd'hui.
 
 \section{Présentation des articles}
-
-\subsection{Construction de kd-Trees en O(N log N)}
-
-\textit{Cette sous-partie traite exclusivement de l'article} On building fast kd-Trees for Ray Tracing, and on doing that in O(N log N)\textit{, de Ingo Wald et Vlastimil Havran.}
-
-La proposition d'algorithme est tirée d'un algorithme en $O(N.log^2(N))$ ré-adapté.
-
-%TODO formule du coût.
-
-\subsection{Parallélisation de la construction sur GPU}
-
-Le but de cet article est de présenter un algorithme rapide de construction des kd-trees sur GPU (Graphics Processing Unit)\footnote{Pour rappel, les GPUs jouent le rôle de CPUs simplifiées et utilisées en parallèle avec un très grand nombre d'autres GPUs (plusieurs milliers).}. Tout d'abord, l'état de l'art de la construction des kd-trees est rappelé, puis la solution est proposée et expliquée en détails. Enfin, une évaluation de l'algorithme est réalisée par tests sur trois cas d'utilisation~: le tracé de rayons, le placage de photons\footnote{Technique permettant de simuler l'illumination dans une scène graphique.} (\textit{Photon Mapping} en anglais) et la recherche des plus proches voisins dans un nuage de points.
 
 \subsection{Etat de l'art}
 Pour les deux articles, les auteurs partent du constat qu'on cherche en général à construire des arbres kd efficaces pour la recherche dans un espace à $k$ dimensions, sans prendre en compte le temps de construction de l'arbre. Il est vrai que ceci n'est pas un gros problème pour des petits espaces. Cependant, les espaces deviennent de plus en plus grands et de plus en plus denses, ce qui met au premier plan la nécessité de disposer d'algorithmes rapides.
@@ -140,7 +140,7 @@ Ceci nous permet de réécrire la fonction $TrouverPlan$~:
 
 \subsubsection{Algorithme GPU}
 
-Tout d'abord, il convient de préciser que l'algorithme est composé de deux étapes qui sont destinées à optimiser la parallélisation~:
+Tout d'abord, il convient de préciser que l'algorithme est coposé de deux étapes qui sont destinées à optimiser la parallélisation~:
 \begin{enumerate}
 	\item Construction des "grands" nœuds (ceux qui contiennent beaucoup de feuilles), proches de la racine de l'arbre~: la parallélisation se fait sur les triangles.
 	\item Construction des "petits" nœuds, proches des feuilles~: la parallélisation se fait sur les nœuds.
